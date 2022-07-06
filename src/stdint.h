@@ -1,4 +1,5 @@
 typedef unsigned char uint8_t;
+typedef unsigned char bool;
 
 #if !defined(uint32_t) && !defined(_UINT32_T) && !defined(vxWorks)
 #if (ULONG_MAX == UINT32_MAX) || defined (S_SPLINT_S)

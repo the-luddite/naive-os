@@ -1,16 +1,55 @@
 #include "system.h"
 
 
-// volatile unsigned int * const UART0DR = (unsigned int *)0x101f1000;
-// volatile unsigned int * const SYS_FLAGS = (unsigned int *)0x10000030;
-// volatile unsigned int * const SYS_100HZ = (unsigned int *)0x10000024;
+static char horrible_buffer[4096];
+static uint32_t bp;
 
 
+bool read_console(char *s, int max) {
+    read_uart(UART0, s, max);
+}
 
+void __attribute__((interrupt)) irq_handler() {
+    char c = UART0->DR;
+    UART0->DR = c;
+    if (c == 'q' || bp == (4096 - 2)) {
+        print_uart(UART0, horrible_buffer);
+        bp = 0;
+    } else {
+        horrible_buffer[bp] = c;
+        horrible_buffer[bp + 1] = '\0';
+        bp++;
+    }
+}
  
+/* all other handlers are infinite loops */
+void __attribute__((interrupt)) undef_handler(void) { for(;;); }
+void __attribute__((interrupt)) swi_handler(void) { for(;;); }
+void __attribute__((interrupt)) prefetch_abort_handler(void) { for(;;); }
+void __attribute__((interrupt)) data_abort_handler(void) { for(;;); }
+void __attribute__((interrupt)) fiq_handler(void) { for(;;); }
+ 
+
+void copy_vectors(void) {
+    extern uint32_t vectors_start;
+    extern uint32_t vectors_end;
+    uint32_t *vectors_src = &vectors_start;
+    uint32_t *vectors_dst = (uint32_t *)0;
+
+while(vectors_src < &vectors_end)
+    *vectors_dst++ = *vectors_src++;
+}
+
 void core_main() {
+
     print_uart(UART0, "We have started\n");
     current_state = initializing;
 
+    VIC_INTENABLE = 1<<12;
+    UART0->IMSC = 1<<4;
+    current_state = running;
+
+    print_uart(UART0, "Initialized\n");
+    for(;;);
 }
 
