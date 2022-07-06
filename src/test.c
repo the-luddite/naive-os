@@ -5,13 +5,12 @@ static char horrible_buffer[4096];
 static uint32_t bp;
 
 
-bool read_console(char *s, int max) {
-    read_uart(UART0, s, max);
-}
-
-void __attribute__((interrupt)) irq_handler() {
+void echo_console(void) {
+    /* do echo */
     char c = UART0->DR;
     UART0->DR = c;
+
+    /* why doesn't it react on '\n'? */
     if (c == 'q' || bp == (4096 - 2)) {
         print_uart(UART0, horrible_buffer);
         bp = 0;
@@ -20,6 +19,10 @@ void __attribute__((interrupt)) irq_handler() {
         horrible_buffer[bp + 1] = '\0';
         bp++;
     }
+}
+
+void __attribute__((interrupt)) uart0_irq_handler() {
+    echo_console();
 }
  
 /* all other handlers are infinite loops */

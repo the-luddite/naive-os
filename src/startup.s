@@ -11,7 +11,7 @@ vectors_start:
  LDR PC, prefetch_abort_handler_addr
  LDR PC, data_abort_handler_addr
  B .
- LDR PC, irq_handler_addr
+ LDR PC, uart0_irq_handler_addr
  LDR PC, fiq_handler_addr
  
 reset_handler_addr: .word reset_handler
@@ -19,7 +19,7 @@ undef_handler_addr: .word undef_handler
 swi_handler_addr: .word swi_handler
 prefetch_abort_handler_addr: .word prefetch_abort_handler
 data_abort_handler_addr: .word data_abort_handler
-irq_handler_addr: .word irq_handler
+uart0_irq_handler_addr: .word uart0_irq_handler
 fiq_handler_addr: .word fiq_handler
  
 vectors_end:
