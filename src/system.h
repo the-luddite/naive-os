@@ -1,9 +1,10 @@
 #pragma once
 
 #include "uart.h"
+#include "versatile.h"
 
-#define VIC_BASE_ADDR 0x10140000
-#define VIC_INTENABLE (*((volatile uint32_t *)(VIC_BASE_ADDR + 0x010)))
+
+#define readl(addr) (*(volatile unsigned int *) (addr))
 
 
 enum system_state {

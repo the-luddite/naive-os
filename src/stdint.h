@@ -1,5 +1,11 @@
+#pragma once
+
+
 typedef unsigned char uint8_t;
 typedef unsigned char bool;
+typedef unsigned long long uint64_t;
+typedef signed long long int64_t;
+
 
 #if !defined(uint32_t) && !defined(_UINT32_T) && !defined(vxWorks)
 #if (ULONG_MAX == UINT32_MAX) || defined (S_SPLINT_S)
