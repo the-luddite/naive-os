@@ -6,12 +6,14 @@ pl011_T * const UART2 = (pl011_T *)0x101f3000;
 
 
 void print_uart(pl011_T *uart, const char *s) {
-    uart->DR = '\t\n';
+    uart->DR = '\t';
+    uart->DR = '\n';
     while(*s != '\0') { 
         uart->DR = (unsigned int)(*s); 
         s++;
     }
-    uart->DR = '\t\n';
+    uart->DR = '\t';
+    uart->DR = '\n';
 }
 
 

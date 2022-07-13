@@ -20,6 +20,8 @@
 #include "system.h"
 #include "div.h"
 
+#define CONFIG_ARCH_CINTEGRATOR
+
 
 #ifdef CONFIG_ARCH_CINTEGRATOR
 #define DIV_CLOCK_INIT	1

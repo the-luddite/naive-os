@@ -227,6 +227,6 @@
 #define TIMER_ONE_SHT	(1 << 0)
 
 #define CONFIG_SYS_HZ_CLOCK		24000000	/* Timer 1 is clocked at 24Mhz */
-#define CONFIG_SYS_HZ			1000
+#define CONFIG_SYS_HZ			256
 
 #endif	/* __CONFIG_H */
