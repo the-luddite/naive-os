@@ -19,6 +19,7 @@
 
 #include "system.h"
 #include "div.h"
+#include "timer.h"
 
 #define CONFIG_ARCH_CINTEGRATOR
 

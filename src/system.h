@@ -2,6 +2,8 @@
 
 #include "uart.h"
 #include "versatile.h"
+#include "timer.h"
+#include "console.h"
 
 
 #define readl(addr) (*(volatile unsigned int *) (addr))
