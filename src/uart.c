@@ -1,31 +1,22 @@
 #include "uart.h"
 
-pl011_T * const UART0 = (pl011_T *)0x101f1000;
-pl011_T * const UART1 = (pl011_T *)0x101f2000;
-pl011_T * const UART2 = (pl011_T *)0x101f3000;
+volatile unsigned int * const UART0DR = (unsigned int *) UARTDR;
+volatile unsigned int * const UART0FR = (unsigned int *) UARTFR;
 
 
-void print_uart(pl011_T *uart, const char *s) {
-    uart->DR = '\t';
-    uart->DR = '\n';
+void print_uart(const char *s) {
+    *UART0DR = '\t';
+    *UART0DR = '\n';
     while(*s != '\0') { 
-        uart->DR = (unsigned int)(*s); 
+        *UART0DR = (unsigned int)(*s); 
         s++;
     }
-    uart->DR = '\t';
-    uart->DR = '\n';
+    *UART0DR = '\t';
+    *UART0DR = '\n';
 }
 
 
-bool read_uart(pl011_T *uart, char *buf, int max) {
-    int c = 1;
-    if ((uart->FR & RXFE) == 0) {
-        while(uart->FR & TXFF && c != max) {
-            *buf = uart->DR;
-            buf++;
-            c++;
-        }
-        return 0;
-    }
-    return 1;
+char read_uart() {
+    while( (*UART0FR & 0x10) != 0) continue;
+    return *UART0DR;
 }
