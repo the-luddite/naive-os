@@ -1,163 +1,115 @@
 /*
- * Credits: https://github.com/jcyesc/rpi3-bare-metal-experiments/blob/master/kernel/interrupts.s
- * 
- * ARM Cortex A-53 vector table initialization
+ * (C) Copyright 2013
+ * David Feng <fenghua@phytium.com.cn>
  *
- * Initializes the vector tables for the EL3 exception level.
+ * SPDX-License-Identifier:	GPL-2.0+
  */
-.section ".boot"
 
-// Set the vector tables for EL3 exception level.
-.global set_vector_tables
-set_vector_tables:
-    ldr x0, =vector_table_el3
-    msr vbar_el3, x0
-    isb
+.macro	switch_el, xreg, el3_label, el2_label, el1_label
+	mrs	\xreg, CurrentEL
+	cmp	\xreg, 0xc
+	b.eq	\el3_label
+	cmp	\xreg, 0x8
+	b.eq	\el2_label
+	cmp	\xreg, 0x4
+	b.eq	\el1_label
+.endm
+/*
+ * Enter Exception.
+ * This will save the processor state that is ELR/X0~X30
+ * to the stack frame.
+ */
+.macro	exception_entry
+	stp	x29, x30, [sp, #-16]!
+	stp	x27, x28, [sp, #-16]!
+	stp	x25, x26, [sp, #-16]!
+	stp	x23, x24, [sp, #-16]!
+	stp	x21, x22, [sp, #-16]!
+	stp	x19, x20, [sp, #-16]!
+	stp	x17, x18, [sp, #-16]!
+	stp	x15, x16, [sp, #-16]!
+	stp	x13, x14, [sp, #-16]!
+	stp	x11, x12, [sp, #-16]!
+	stp	x9, x10, [sp, #-16]!
+	stp	x7, x8, [sp, #-16]!
+	stp	x5, x6, [sp, #-16]!
+	stp	x3, x4, [sp, #-16]!
+	stp	x1, x2, [sp, #-16]!
 
-    ret
+	/* Could be running at EL3/EL2/EL1 */
+	switch_el x11, 3f, 2f, 1f
+3:	mrs	x1, esr_el3
+	mrs	x2, elr_el3
+	b	0f
+2:	mrs	x1, esr_el2
+	mrs	x2, elr_el2
+	b	0f
+1:	mrs	x1, esr_el1
+	mrs	x2, elr_el1
+0:
+	stp	x2, x0, [sp, #-16]!
+	mov	x0, sp
+.endm
 
-///////////////////////////////////////////////////////////////////////
-// Vector tables definition and helper functions.
-//
-// Vector table contains 16 entries.
-// Each entry is 128 bytes and contains at most 32 instructions.
-// Vector table is align a 2Kb-align address (0x800)
-///////////////////////////////////////////////////////////////////////
+/*
+ * Exception vectors.
+ */
+	.align	11
+	.globl	vectors
+vectors:
+	.align	7
+	b	_do_bad_sync	/* Current EL Synchronous Thread */
 
-// Increases the EL3 LR address by 4 bytes and returns from the interrut.
-// This works because we are only generating BAD memory address and returning
-// to the next instructions.
-// IMPORTANT: Increasing the elr_el3 shouldn't be done in practice because
-// it assumes that we know exactly the assembly that is generated.
-post_intr_processing_el3:
-    mrs     x0, elr_el3
-    add     x0, x0, 4
-    msr     elr_el3, x0
+	.align	7
+	b	_do_bad_irq	/* Current EL IRQ Thread */
 
-    eret
+	.align	7
+	b	_do_bad_fiq	/* Current EL FIQ Thread */
 
-// Vector table for EL3.
-.balign 0x800
-vector_table_el3:
-// Handlers for current EL with SP_EL0
-.balign 0x80
-el3_curr_el_sp0_sync:
-    mov   x0, sync_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_thread_mode
-    b     post_intr_processing_el3
+	.align	7
+	b	_do_bad_error	/* Current EL Error Thread */
 
-.balign 0x80
-el3_curr_el_sp0_irq:
-    mov   x0, irq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_thread_mode
-    b     post_intr_processing_el3
+	.align	7
+	b	_do_sync	/* Current EL Synchronous Handler */
 
-.balign 0x80
-el3_curr_el_sp0_fiq:
-    mov   x0, fiq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_thread_mode
-    b     post_intr_processing_el3
+	.align	7
+	b	_do_irq		/* Current EL IRQ Handler */
 
-.balign 0x80
-el3_curr_el_sp0_serror:
-    mov   x0, serror_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_thread_mode
-    b     post_intr_processing_el3
+	.align	7
+	b	_do_fiq		/* Current EL FIQ Handler */
 
-// Handlers for current EL with SP_ELx
-.balign 0x80
-el3_curr_el_spx_sync:
-    mov   x0, sync_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_handler_mode
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_curr_el_spx_irq:
-    mov   x0, irq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_handler_mode
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_curr_el_spx_fiq:
-    mov   x0, fiq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_handler_mode
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_curr_el_spx_serror:
-    mov   x0, serror_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_handler_mode
-    b     post_intr_processing_el3
-
-// Handlers for lower EL using AArch64
-.balign 0x80
-el3_lower_el_aarch64_sync:
-    mov   x0, sync_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch64_state
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_lower_el_aarch64_irq:
-    mov   x0, irq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch64_state
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_lower_el_aarch64_fiq:
-    mov   x0, fiq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch64_state
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_lower_el_aarch64_serror:
-    mov   x0, serror_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch64_state
-    b     post_intr_processing_el3
-
-// Handlers for lower EL using AArch32
-.balign 0x80
-el3_lower_el_aarch32_sync:
-    mov   x0, sync_type
-    mrs   x1, esr_el3
-    bl   intr_el3_handler_changed_el_in_aarch32_state
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_lower_el_aarch32_irq:
-    mov   x0, irq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch32_state
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_lower_el_aarch32_fiq:
-    mov   x0, fiq_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch32_state
-    b     post_intr_processing_el3
-
-.balign 0x80
-el3_lower_el_aarch32_serror:
-    mov   x0, serror_type
-    mrs   x1, esr_el3
-    bl    intr_el3_handler_changed_el_in_aarch32_state
-    b     post_intr_processing_el3
+	.align	7
+	b	_do_error	/* Current EL Error Handler */
 
 
-// FLAG defintions for the type of interrupts
-.equ sync_type,     0
-.equ irq_type,      1
-.equ fiq_type,      2
-.equ serror_type,   3
+_do_bad_sync:
+	exception_entry
+	bl	do_bad_sync
+
+_do_bad_irq:
+	exception_entry
+	bl	do_bad_irq
+
+_do_bad_fiq:
+	exception_entry
+	bl	do_bad_fiq
+
+_do_bad_error:
+	exception_entry
+	bl	do_bad_error
+
+_do_sync:
+	exception_entry
+	bl	do_sync
+
+_do_irq:
+	exception_entry
+	bl	do_irq
+
+_do_fiq:
+	exception_entry
+	bl	do_fiq
+
+_do_error:
+	exception_entry
+	bl	do_error

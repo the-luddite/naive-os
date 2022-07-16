@@ -1,6 +1,17 @@
+#include "system.h"
 
 
-void __attribute__((interrupt)) intr_el3_handler_thread_mode(void) { for(;;); }
-void __attribute__((interrupt)) intr_el3_handler_handler_mode(void) { for(;;); }
-void __attribute__((interrupt)) intr_el3_handler_changed_el_in_aarch64_state(void) { for(;;); }
-void __attribute__((interrupt)) intr_el3_handler_changed_el_in_aarch32_state(void) { for(;;); }
+void __attribute__((interrupt)) do_bad_sync(void) { for(;;); }
+void __attribute__((interrupt)) do_bad_irq(void) { for(;;); }
+void __attribute__((interrupt)) do_bad_fiq(void) { for(;;); }
+void __attribute__((interrupt)) do_bad_error(void) { for(;;); }
+void __attribute__((interrupt)) do_sync(void) { for(;;); }
+
+void __attribute__((interrupt)) do_fiq(void) { for(;;); }
+void __attribute__((interrupt)) do_error(void) { for(;;); }
+
+
+void __attribute__((interrupt)) do_irq(void) { 
+    print_uart("irq interrupt happened!\n");
+
+}

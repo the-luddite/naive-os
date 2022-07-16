@@ -1,37 +1,75 @@
-.section ".text.boot"  // Make sure the linker puts this at the start of the kernel image
+.section ".startup"
 
-.global _start  // Execution starts here
+.text
 
+.macro	switch_el, xreg, el3_label, el2_label, el1_label
+	mrs	\xreg, CurrentEL
+	cmp	\xreg, 0xc
+	b.eq	\el3_label
+	cmp	\xreg, 0x8
+	b.eq	\el2_label
+	cmp	\xreg, 0x4
+	b.eq	\el1_label
+.endm
+
+.global uart
+uart:
+    .xword 150994944
+
+    .text
+    .global _start
 _start:
-    // Check processor ID is zero (executing on main core), else hang
-    mrs     x1, mpidr_el1
-    and     x1, x1, #3
-    cbz     x1, 2f
-    // We're not on the main core, so hang in an infinite wait loop
-1:  wfe
-    b       1b
-2:  // We're on the main core!
+sleep_cores_1_2_3:
+    mrs     x0, mpidr_el1   // Gets core number using the
+                            // multiprocessor affinity register.
+    and     x0, x0, #3      // Checks if the core id is 1, 2 or 3
+    cbz     x0, cpu_0_code  // If core 0, it jumps to cpu_0_code.
 
-    // Set stack to start below our code
-    ldr     x1, =_start
-    mov     sp, x1
+infinite_loop:
+    wfe                     // Puts the core to sleep (Wait for event)
+    b       infinite_loop
 
-    // Clean the BSS section
-    ldr     x1, =__bss_start     // Start address
-    ldr     w2, =__bss_size      // Size of the section
-    // Start initialization
-    bl init_general_purpose_regs
-    bl init_floating_point_regs
-    bl init_stack_pointer_regs
-    bl init_system_registers_el3
-    bl set_vector_tables
+cpu_0_code:
+    // bl init_stack_pointer_regs
+    adrp	x0, stack_top
+    mov	sp, x0
 
-3:  cbz     w2, 4f               // Quit loop if zero
-    str     xzr, [x1], #8
-    sub     w2, w2, #1
-    cbnz    w2, 3b               // Loop if non-zero
+    adr	x0, vectors 
+       
+    switch_el x1, 3f, 2f, 1f
 
-    // Jump to our main() routine in C (make sure it doesn't return)
-4:  bl      core_main
-    // In case it does return, halt the master core too
-    b       1b
+3:	msr	vbar_el3, x0
+	mrs	x0, scr_el3
+	orr	x0, x0, #0xf			/* SCR_EL3.NS|IRQ|FIQ|EA */
+	msr	scr_el3, x0
+	msr	cptr_el3, xzr			/* Enable FP/SIMD */
+	ldr	x0, =0x1800000          /* Set counter friequency to 24MHz */
+	msr	cntfrq_el0, x0			/* Initialize CNTFRQ */
+	b	0f
+2:	msr	vbar_el2, x0
+	mov	x0, #0x33ff
+	msr	cptr_el2, x0			/* Enable FP/SIMD */
+	b	0f
+1:	msr	vbar_el1, x0
+	mov	x0, #3 << 20
+	msr	cpacr_el1, x0			/* Enable FP/SIMD */
+0:
+    // debug message start
+    adrp x0, uart
+    add x0, x0, :lo12:uart
+    ldr x0, [x0]
+
+    mov w1, 104
+    strb w1, [x0]
+
+    mov w1, 101
+    strb w1, [x0]
+
+    mov w1, 108
+    strb w1, [x0]
+
+    mov w1, 108
+    strb w1, [x0]
+    // debug message end
+
+    bl core_main

@@ -9,10 +9,10 @@ CFLAGS = -mcpu=cortex-a57
 all: core.bin
 
 %.o: %.c:
-	$(CROSS)-gcc $(CFLAGS) -c $< -o $@
+	$(CROSS)-gcc $(CFLAGS) -c $< -o $@ 
 
 %.o: %.s:
-	$(CROSS)-gcc $(CFLAGS) -c $< -o $@
+	$(CROSS)-as $(CFLAGS) -c $< -o $@ -ggdb
 
 
 core.bin: $(OBJS)
@@ -20,7 +20,7 @@ core.bin: $(OBJS)
 
 
 qemu:
-	qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic \
+	qemu-system-aarch64 -S -machine virt -cpu cortex-a57 -nographic \
 		-chardev tty,path=/dev/ttyUSB0,id=hostusbserial \
 		-device pci-serial,chardev=hostusbserial \
 		-kernel core.bin
