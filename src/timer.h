@@ -1,5 +1,6 @@
 #pragma once
+#include "system.h"
 
 
-int timer_init(void);
-unsigned long get_timer_masked(void);
+void timer_init(void);
+void timer_test();

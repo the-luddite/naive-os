@@ -3,8 +3,8 @@
 
 #define UART_BUF_MAX 100
 
-static uint64_t uart_buffer[UART_BUF_MAX];
-static uint64_t buffer_p = 0;
+static uint32_t uart_buffer[UART_BUF_MAX];
+static uint32_t buffer_p = 0;
 
 pl011_T * const UART0 = (pl011_T *)QEMU_VIRT_UART_BASE;
 
@@ -47,20 +47,20 @@ void print_uart(const char *s)
 {
     while(*s != '\0') 
     { 
-        put_uart(*s); 
+        put_uart(s); 
         s++;
     }
 }
 
 void put_uart(const char *s)
 {
-    UART0->DR = (uint64_t)(*s);
+    UART0->DR = (unsigned int)(*s);
 }
 
-uint64_t read_uart() 
+uint32_t read_uart() 
 {
     while( (UART0->FR & 0x10) != 0) continue;
-    return (uint64_t)UART0->DR;
+    return (uint32_t)UART0->DR;
 }
 
 char *str_reverse_in_place(char *str, int len) 
@@ -97,7 +97,7 @@ void print_uint(unsigned int digit)
 
 void handle_uart_irq()
 {
-    uint64_t c = read_uart();
+    uint32_t c = read_uart();
 
     if (buffer_p >= UART_BUF_MAX - 1
             || c == 13)
