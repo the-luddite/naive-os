@@ -21,18 +21,7 @@ void __attribute__((interrupt)) do_bad_error(void)
 
 void __attribute__((interrupt)) do_sync(void) 
 { 
-
-    uint32_t buf[64];
-    uint32_t c;
-
-    c = lookup_pending_irqs(buf);
     print_uart("do_sync interrupt happened!\n");
-    print_uart("sync irqs found: ");
-    for (int i = 0; i < c; i++)
-    {
-        print_uart(buf[i]);
-    }
-    print_uart('\n');    
 }
 
 void __attribute__((interrupt)) do_fiq(void) 
@@ -45,18 +34,55 @@ void __attribute__((interrupt)) do_error(void)
     print_uart("do_error interrupt happened!\n");
 }
 
+
+static uint32_t cntfrq;	
 void __attribute__((interrupt)) do_irq(void) 
 { 
+    irq_no irq;
+    extern pl011_T * const UART0;
+    uint64_t ticks, current_cnt;
+
     print_uart("do_irq interrupt happened!\n");
-    if (gicd_probe_pending(TIMER_IRQ))
-    {
-        print_uart("and yes this is 27!\n");
-        gicd_clear_pending(TIMER_IRQ);
-    }
-    if (gicd_probe_pending(UART_IRQ))
-    {
-        print_uart("and yes this is 33!\n");
-        gicd_clear_pending(UART_IRQ);
-    }
     
+    if (pending_irq(&irq))
+    {
+        switch (irq)
+        {
+        case TIMER_IRQ:
+            print_uart("and yes this is 27!\n");
+            cntfrq = get_cntfrq();
+
+            // Next timer IRQ is after n sec(s).
+            ticks = cntfrq;
+            // Get value of the current timer
+            current_cnt = get_cntvct();
+            // Set the interrupt in Current Time + TimerTick
+            put_cntv_cval(current_cnt + ticks);
+            goto clear;
+            break;
+        
+        case UART_IRQ:
+            print_uart("and yes this is 33!\n");
+            // gicd_disable_int(irq);
+            // disable UART IRQ
+            UART0->CR = 0;
+            UART0->IMSC = 0;
+            UART0->CR =(1 << 9) | (1 << 8) | (1 << 0);
+            UART0->IMSC = 1<<4;
+            
+            // gicd_enable_int(irq);
+
+            goto clear;
+            break;
+        default:
+            print_uart("hm, there something else...   ");
+            print_uint(irq);
+            goto clear;
+            break;
+        }
+    } else {
+        print_uart("ERROR: that's weird, we've received irq but pending_irq returned nothing\n");
+    }
+clear:
+    gicd_clear_pending(irq);
 }

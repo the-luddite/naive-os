@@ -12,6 +12,9 @@ void core_main()
 {
     print_uart("hello world\n");
 
+	uart_init();
+	gic_v3_initialize();
+
     timer_test();
 
 }
@@ -21,12 +24,6 @@ void timer_test(void)
 	uint32_t val;
 	uint64_t ticks, current_cnt;
     extern pl011_T * const UART0;
-
-    UART0->IMSC = 1<<4;
-
-    print_uart("timer_test\n");
-	// GIC Init
-	gic_v3_initialize();
 
     print_uart("CurrentEL = ");
 	get_current_el(&val);
@@ -57,12 +54,13 @@ void timer_test(void)
 	get_cntv_ctl(&val);
 	print_uint(val);
 
-	// Enable IRQ 
+	// // Enable IRQ 
 	enable_irq();
     print_uart("\nEnable IRQ, DAIF = ");
 	get_daif(&val);
 	print_uint(val);
     print_uart("\n");
+
 
     while(1){
 		wfi();	/* Wait for Interrupt */

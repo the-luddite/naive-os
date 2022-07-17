@@ -6,6 +6,23 @@
 pl011_T * const UART0 = (pl011_T *)QEMU_VIRT_UART_BASE;
 
 
+void uart_init()
+{
+    // enable UART interrupts
+    
+
+    UART0->CR = 0;
+    UART0->IMSC = 0;
+
+    // set baudrate = 115200
+    UART0->IBRD = 26;
+    UART0->FBRD = 3;
+    
+    UART0->LCR_H = (3 << 5) | (1 << 4);
+    UART0->CR =(1 << 9) | (1 << 8) | (1 << 0);
+    UART0->IMSC = 1<<4;
+}
+
 void print_uart(const char *s) 
 {
     while(*s != '\0') 
@@ -14,7 +31,6 @@ void print_uart(const char *s)
         s++;
     }
 }
-
 
 char read_uart() 
 {

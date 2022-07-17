@@ -65,20 +65,20 @@ void get_daif(uint32_t *daif)
 	__asm__ __volatile__("mrs %0, DAIF\n\t" : "=r" (daif) :  : "memory");
 }
 
-/** Find pending IRQ
-    @param[in]     exc  An exception frame
-    @param[in,out] irqp An IRQ number to be processed
- */
-uint32_t lookup_pending_irqs(irq_no *pending_irqs) 
+void put_daif(uint32_t daif)
 {
-	uint32_t c = 0;
+	__asm__ __volatile__("msr DAIF, %0\n\t" : : "r" (daif) : "memory");
+}
+
+uint32_t pending_irq(irq_no *pending_irq) 
+{
 	for(irq_no i = 0; GIC_INT_MAX > i; ++i) 
 	{
 		if (gicd_probe_pending(i)) 
 		{
-			pending_irqs[c] = i;
-			c++;
+			*pending_irq = i;
+			return 1;
 		}
 	}
-	return c;
+	return 0;
 }

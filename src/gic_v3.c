@@ -193,20 +193,26 @@ void gic_v3_initialize(void)
     print_uart("gic_v3_initialize()\n");
 	init_gicd();
 	init_gicc();
-	// gicd_config(TIMER_IRQ, GIC_GICD_ICFGR_EDGE);
-	// gicd_set_priority(TIMER_IRQ, 0 << GIC_PRI_SHIFT );  /* Set priority */
-	// gicd_set_target(TIMER_IRQ, 0x1);  /* processor 0 */
-	// gicd_clear_pending(TIMER_IRQ);
-	// gicd_enable_int(TIMER_IRQ);
+	gicd_config(TIMER_IRQ, GIC_GICD_ICFGR_EDGE);
+	gicd_set_priority(TIMER_IRQ, 0 << GIC_PRI_SHIFT );  /* Set priority */
+	gicd_set_target(TIMER_IRQ, 0x1);  /* processor 0 */
+	gicd_clear_pending(TIMER_IRQ);
+	gicd_enable_int(TIMER_IRQ);
 
-	for (uint32_t i = 0; i < 64; i++)
-	{
-		gicd_config(i, GIC_GICD_ICFGR_EDGE);
-		gicd_set_priority(i, 0 << GIC_PRI_SHIFT );  /* Set priority */
-		gicd_set_target(i, 0x1);  /* processor 0 */
-		gicd_clear_pending(i);
-		gicd_enable_int(i);
-	}
+	gicd_config(UART_IRQ, GIC_GICD_ICFGR_EDGE);
+	gicd_set_priority(UART_IRQ, 0 << GIC_PRI_SHIFT );  /* Set priority */
+	gicd_set_target(UART_IRQ, 0x1);  /* processor 0 */
+	gicd_clear_pending(UART_IRQ);
+	gicd_enable_int(UART_IRQ);
+
+	// for (uint32_t i = 0; i < 64; i++)
+	// {
+	// 	gicd_config(i, GIC_GICD_ICFGR_EDGE);
+	// 	gicd_set_priority(i, 0 << GIC_PRI_SHIFT );  /* Set priority */
+	// 	gicd_set_target(i, 0x1);  /* processor 0 */
+	// 	gicd_clear_pending(i);
+	// 	gicd_enable_int(i);
+	// }
 }
 
 /** Probe pending interrupt
