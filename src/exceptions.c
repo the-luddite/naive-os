@@ -11,7 +11,8 @@ void __attribute__((interrupt)) do_fiq(void) { for(;;); }
 void __attribute__((interrupt)) do_error(void) { for(;;); }
 
 
-void __attribute__((interrupt)) do_irq(void) { 
+void __attribute__((interrupt)) do_irq(void) 
+{ 
     print_uart("irq interrupt happened!\n");
 
 }

@@ -4,7 +4,8 @@ volatile unsigned int * const UART0DR = (unsigned int *) UARTDR;
 volatile unsigned int * const UART0FR = (unsigned int *) UARTFR;
 
 
-void print_uart(const char *s) {
+void print_uart(const char *s) 
+{
     *UART0DR = '\t';
     *UART0DR = '\n';
     while(*s != '\0') { 
@@ -16,12 +17,14 @@ void print_uart(const char *s) {
 }
 
 
-char read_uart() {
+char read_uart() 
+{
     while( (*UART0FR & 0x10) != 0) continue;
     return *UART0DR;
 }
 
-char *str_reverse_in_place(char *str, int len) {
+char *str_reverse_in_place(char *str, int len) 
+{
     char *p1 = str;
     char *p2 = str + len - 1;
 
@@ -34,7 +37,8 @@ char *str_reverse_in_place(char *str, int len) {
     return str;
 }
 
-void print_uint(unsigned int digit) {
+void print_uint(unsigned int digit) 
+{
     char digits[] = "0123456789";
     char buf[25];
     unsigned int c = 0;
