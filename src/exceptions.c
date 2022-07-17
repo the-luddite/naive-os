@@ -42,10 +42,11 @@ void __attribute__((interrupt)) do_irq(void)
     extern pl011_T * const UART0;
     uint64_t ticks, current_cnt;
 
-    print_uart("do_irq interrupt happened!\n");
+    // print_uart("do_irq interrupt happened!\n");
     
     if (pending_irq(&irq))
     {
+        gicd_disable_int(irq);
         switch (irq)
         {
         case TIMER_IRQ:
@@ -62,17 +63,13 @@ void __attribute__((interrupt)) do_irq(void)
             break;
         
         case UART_IRQ:
-            print_uart("and yes this is 33!\n");
-            // gicd_disable_int(irq);
-            // disable UART IRQ
-            // UART0->CR = 0;
-            // UART0->IMSC = 0;
-            // UART0->CR =(1 << 9) | (1 << 8) | (1 << 0);
-            // UART0->IMSC = 1<<4;
-            UART0->DR = UART0->DR;
-            
-            // gicd_enable_int(irq);
+            // print_uart("and yes this is 33!\n");
+            uart_disable_irq();
 
+            // print_uint(UART0->DR);
+            handle_uart_irq();
+
+            uart_enable_irq();
             goto clear;
             break;
         default:
@@ -86,4 +83,5 @@ void __attribute__((interrupt)) do_irq(void)
     }
 clear:
     gicd_clear_pending(irq);
+    gicd_enable_int(irq);
 }

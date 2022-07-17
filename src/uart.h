@@ -33,4 +33,4 @@ enum {
 
 
 void print_uart(const char *s);
-char read_uart();
+uint64_t read_uart();
