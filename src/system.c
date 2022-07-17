@@ -44,7 +44,6 @@ void put_cntv_cval(uint64_t cntv_cval_el0)
 	__asm__ __volatile__("msr CNTV_CVAL_EL0, %0\n\t" : : "r" (cntv_cval_el0) : "memory");
 }
 
-
 void enable_irq(void)
 {
 	__asm__ __volatile__("msr DAIFClr, %0\n\t" : : "i" (DAIF_IRQ_BIT)  : "memory");
@@ -64,4 +63,22 @@ void enable_irq(void)
 void get_daif(uint32_t *daif)
 {
 	__asm__ __volatile__("mrs %0, DAIF\n\t" : "=r" (daif) :  : "memory");
+}
+
+/** Find pending IRQ
+    @param[in]     exc  An exception frame
+    @param[in,out] irqp An IRQ number to be processed
+ */
+uint32_t lookup_pending_irqs(irq_no *pending_irqs) 
+{
+	uint32_t c = 0;
+	for(irq_no i = 0; GIC_INT_MAX > i; ++i) 
+	{
+		if (gicd_probe_pending(i)) 
+		{
+			pending_irqs[c] = i;
+			c++;
+		}
+	}
+	return c;
 }

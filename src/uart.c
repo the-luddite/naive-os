@@ -1,26 +1,25 @@
 #include "uart.h"
 
-volatile unsigned int * const UART0DR = (unsigned int *) UARTDR;
-volatile unsigned int * const UART0FR = (unsigned int *) UARTFR;
+// volatile unsigned int * const UART0DR = (unsigned int *) UARTDR;
+// volatile unsigned int * const UART0FR = (unsigned int *) UARTFR;
+
+pl011_T * const UART0 = (pl011_T *)QEMU_VIRT_UART_BASE;
 
 
 void print_uart(const char *s) 
 {
-    *UART0DR = '\t';
-    *UART0DR = '\n';
-    while(*s != '\0') { 
-        *UART0DR = (unsigned int)(*s); 
+    while(*s != '\0') 
+    { 
+        UART0->DR = (unsigned int)(*s); 
         s++;
     }
-    *UART0DR = '\t';
-    *UART0DR = '\n';
 }
 
 
 char read_uart() 
 {
-    while( (*UART0FR & 0x10) != 0) continue;
-    return *UART0DR;
+    while( (UART0->FR & 0x10) != 0) continue;
+    return UART0->FR;
 }
 
 char *str_reverse_in_place(char *str, int len) 

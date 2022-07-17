@@ -16,9 +16,10 @@
 /*                                                                    */
 /**********************************************************************/
 #if !defined(_GIC_V3_H)
-#define _GIC_V3_H 
+#define _GIC_V3_H
 
-#include "system.h"
+#include "stdint.h"
+#include "qemu.h"
 
 typedef int32_t irq_no;			/* IRQ no */
 

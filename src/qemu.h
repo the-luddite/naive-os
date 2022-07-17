@@ -24,7 +24,8 @@
 #define GIC_PRI_MASK				(0x0f)
 
 /* Timer */
-#define TIMER_IRQ					(27)  /** Timer IRQ  */
+#define TIMER_IRQ					(27)
 
 /* UART */
 #define QEMU_VIRT_UART_BASE			(0x09000000)
+#define UART_IRQ                    (33)

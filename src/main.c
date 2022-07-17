@@ -20,6 +20,9 @@ void timer_test(void)
 {
 	uint32_t val;
 	uint64_t ticks, current_cnt;
+    extern pl011_T * const UART0;
+
+    UART0->IMSC = 1<<4;
 
     print_uart("timer_test\n");
 	// GIC Init

@@ -1,5 +1,12 @@
+#pragma once
+
 #include "uart.h"
 #include "stdint.h"
+#include "gic_v3.h"
+
+
+typedef int32_t irq_no;
+
 
 #define wfi()		asm volatile("wfi" : : : "memory")
 
