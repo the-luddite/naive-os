@@ -19,7 +19,7 @@ void uart_init()
     UART0->FBRD = 3;
     
     UART0->LCR_H = (3 << 5) | (1 << 4);
-    UART0->CR =(1 << 9) | (1 << 8) | (1 << 0);
+    UART0->CR = (1 << 9) | (1 << 8) | (1 << 0);
     UART0->IMSC = 1<<4;
 }
 
