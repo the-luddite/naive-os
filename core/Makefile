@@ -19,8 +19,6 @@ core.bin: $(OBJS)
 	# $(CROSS)-ld -T linker.lt $(OBJS) -o core.bin
 	$(CROSS)-ld  -T linker.lt $(OBJS) -o core.bin
 
-qemu:
-	qemu-system-aarch64 -machine virt -cpu cortex-a57 -kernel core.bin -nographic -display none -serial mon:stdio 
 
 clean:
 	rm -r *.o *.bin
