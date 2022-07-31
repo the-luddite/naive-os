@@ -49,6 +49,11 @@ void enable_irq(void)
 	__asm__ __volatile__("msr DAIFClr, %0\n\t" : : "i" (DAIF_IRQ_BIT)  : "memory");
 }
 
+void disable_irq(void)
+{
+        __asm__ __volatile__("msr DAIFSet, %0\n\t" : : "i" (DAIF_IRQ_BIT)  : "memory");
+}
+
 /* DAIF, Interrupt Mask Bits
 	Allows access to the interrupt mask bits.
 
