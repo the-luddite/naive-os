@@ -37,13 +37,13 @@ void __attribute__((interrupt)) do_error(void)
 void __attribute__((interrupt)) do_irq(void) 
 { 
     irq_no irq;
-    extern pl011_T * const UART0;
 
     // print_uart("do_irq interrupt happened!\n");
     
     if (pending_irq(&irq))
     {
-        gicd_disable_int(irq);
+        // gicd_disable_int(irq);
+        disable_irq();
         switch (irq)
         {
         case TIMER_IRQ:
@@ -71,5 +71,6 @@ void __attribute__((interrupt)) do_irq(void)
     }
 clear:
     gicd_clear_pending(irq);
-    gicd_enable_int(irq);
+    // gicd_enable_int(irq);
+    enable_irq();
 }
