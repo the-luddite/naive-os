@@ -4,15 +4,15 @@ SRC_C = $(wildcard *.c)
 SRC_S = $(wildcard *.s)
 OBJS = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
 
-CFLAGS = -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only
+__CFLAGS = -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS)
 
 all: core.bin
 
 %.o: %.c
-	$(CROSS)-gcc $(CFLAGS) -c $< -o $@
+	$(CROSS)-gcc $(__CFLAGS) -c $< -o $@ 
 
 %.o: %.s
-	$(CROSS)-gcc $(CFLAGS) -c $< -o $@
+	$(CROSS)-gcc $(__CFLAGS) -c $< -o $@
 
 
 core.bin: $(OBJS)

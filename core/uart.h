@@ -34,3 +34,5 @@ enum {
 
 void print_uart(const char *s);
 uint32_t read_uart();
+void put_uart(char c);
+void putc_uart( void* p, char c);

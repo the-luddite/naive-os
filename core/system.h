@@ -3,6 +3,9 @@
 #include "uart.h"
 #include "stdint.h"
 #include "gic_v3.h"
+#include "debug.h"
+#include "scheduler.h"
+#include "printf.h"
 
 
 typedef int32_t irq_no;
@@ -22,3 +25,5 @@ typedef int32_t irq_no;
 #define CNTV_CTL_ENABLE		(1 << 0)	/* Enables the timer */	
 #define CNTV_CTL_IMASK		(1 << 1)	/* Timer interrupt mask bit */
 #define CNTV_CTL_ISTATUS	(1 << 2)	/* The status of the timer interrupt. This bit is read-only */
+
+extern void delay ( unsigned long);

@@ -47,14 +47,21 @@ void print_uart(const char *s)
 {
     while(*s != '\0') 
     { 
-        put_uart(s); 
+        put_uart((char)*s); 
         s++;
     }
 }
 
-void put_uart(const char *s)
+void put_uart(char c)
 {
-    UART0->DR = (unsigned int)(*s);
+    while( (UART0->FR & 0x20) != 0) continue;
+    UART0->DR = c;
+}
+
+// wrapper required by printf
+void putc_uart(void* p, char c)
+{
+	put_uart(c);
 }
 
 uint32_t read_uart() 
@@ -63,7 +70,7 @@ uint32_t read_uart()
     return (uint32_t)UART0->DR;
 }
 
-char *str_reverse_in_place(char *str, int len) 
+static char *__str_reverse_in_place(char *str, int len) 
 {
     char *p1 = str;
     char *p2 = str + len - 1;
@@ -83,6 +90,14 @@ void print_uint(unsigned int digit)
     char buf[25];
     unsigned int c = 0;
 
+    if (digit == 0)
+    {
+        buf[0] = '0';
+        buf[1] = '\0';
+        print_uart(buf);
+        return;
+    }
+
     while (digit > 0)
     {
         unsigned int m = digit % 10;
@@ -90,12 +105,12 @@ void print_uint(unsigned int digit)
         digit /= 10;
         c++;
     }
-    str_reverse_in_place(buf, c);
+    __str_reverse_in_place(buf, c);
     buf[c+1] = '\0';
     print_uart(buf);
 }
 
-void handle_uart_irq()
+void uart_irq_handler()
 {
     uint32_t c = read_uart();
 
