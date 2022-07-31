@@ -12,3 +12,9 @@ void debug(const char *message, unsigned level)
     if (enabled)
         print_uart(message);
 }
+
+void BUG(const char *message)
+{
+    printf("BUG: %s\n", message);
+    for(;;);
+}
