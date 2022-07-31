@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qemu.h"
+#include "stdint.h"
 
 /*
 Src: https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson04/rpi-os.md
@@ -14,12 +15,10 @@ Src: https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson04/
 #define SECTION_SIZE    (1 << SECTION_SHIFT)	
 
 #define LOW_MEMORY      (2 * SECTION_SIZE)
-// #define LOW_MEMORY      (200 * SECTION_SIZE)
 #define HIGH_MEMORY     QEMU_VIRT_PCIE_ECAM
 
 #define PAGING_MEMORY   (HIGH_MEMORY - LOW_MEMORY)
 #define PAGING_PAGES    (PAGING_MEMORY/PAGE_SIZE)
 
 
-unsigned long allocate_page();
-void free_page(unsigned long);
+uintptr_t kmalloc(uint64_t size);

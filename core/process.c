@@ -10,7 +10,7 @@ int copy_process(unsigned long fn, unsigned long arg)
 	preempt_disable();
 	struct job_s *p;
 
-	p = (struct job_s *) allocate_page();
+	p = (struct job_s *) kmalloc(sizeof(struct job_s));
 	if (!p)
 		return 1;
 	p->priority = current->priority;
