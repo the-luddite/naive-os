@@ -20,9 +20,9 @@ void timer_init(void)
 
 void timer_irq_handler()
 {
+	timer_tick();
 	current_cnt = (get_cntvct() + interval) % UINT32_MAX;
 	put_cntv_cval(current_cnt);
-	timer_tick();
 }
 
 // void timer_test()
