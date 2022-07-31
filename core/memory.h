@@ -2,6 +2,7 @@
 
 #include "qemu.h"
 #include "stdint.h"
+#include "debug.h"
 
 /*
 Src: https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson04/rpi-os.md

@@ -19,9 +19,26 @@ static uintptr_t __allocate_page()
     return 0;
 }
 
-static void __free_page(uintptr_t p)
+static void __free_pages(uintptr_t p)
 {
-    mem_map[(p - LOW_MEMORY) / PAGE_SIZE] = FREE;
+    if (p < LOW_MEMORY) return;
+    if (p > HIGH_MEMORY)
+        BUG("__free_page: attempted to free \
+        memory higher than HIGH_MEMORY\n");
+        
+    int s = (p - LOW_MEMORY) / PAGE_SIZE;
+    uint64_t color = mem_map[s];
+
+    if (color == FREE)
+        BUG("__free_page: attempted to free \
+        memory that is already free\n");
+
+    while (mem_map[s] == color)
+    {
+        mem_map[s] = FREE;
+        s++;
+    }
+        
 }
 
 uintptr_t kmalloc(uint64_t size)
@@ -47,4 +64,9 @@ uintptr_t kmalloc(uint64_t size)
     return p;
 fail:
     return 0;
+}
+
+uint8_t kfree(uintptr_t p)
+{
+    __free_pages(p);
 }
