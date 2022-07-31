@@ -110,7 +110,7 @@ void print_uint(unsigned int digit)
     print_uart(buf);
 }
 
-void handle_uart_irq()
+void uart_irq_handler()
 {
     uint32_t c = read_uart();
 

@@ -56,7 +56,7 @@ void __attribute__((interrupt)) do_irq(void)
             debug("uart irq just triggered (33)\n", DEBUG_ALL);
             uart_disable_irq();
             // print_uint(UART0->DR);
-            handle_uart_irq();
+            uart_irq_handler();
             uart_enable_irq();
             goto clear;
             break;
