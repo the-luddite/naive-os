@@ -1,5 +1,6 @@
-SUBDIRS = core
+SUBDIRS = core 
 TOPTARGETS := all clean
+QEMU_ARGS = -m 1024 -machine virt -cpu cortex-a57 -kernel core/core.bin -nographic -display none -serial mon:stdio
 
 .PHONY: subdirs $(SUBDIRS)
 
@@ -10,6 +11,9 @@ $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS) CFLAGS=$(CFLAGS)
 
 qemu:
-	qemu-system-aarch64  -m 1024 -machine virt -cpu cortex-a57 -kernel core/core.bin -nographic -display none -serial mon:stdio
+	qemu-system-aarch64 $(QEMU_ARGS)
+
+qemu_debug:
+	qemu-system-aarch64 $(QEMU_ARGS) -s -S
 
 .PHONY: $(TOPTARGETS) $(SUBDIRS)
