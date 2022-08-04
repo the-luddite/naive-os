@@ -3,7 +3,7 @@
 
 static struct job_s init_task = INIT_TASK;
 struct job_s *current = &(init_task);
-struct job_s * task[NR_TASKS] = {&(init_task), };
+struct job_s *task[NR_TASKS] = {&(init_task), };
 int nr_tasks = 1;
 
 
@@ -17,13 +17,36 @@ void preempt_enable(void)
 	current->preempt_count--;
 }
 
+void schedule(void)
+{
+    current->counter = 0;
+    _schedule();
+}
 
-void _schedule(void)
+// schedule_tail is called from asm
+void schedule_tail(void)
+{
+    preempt_enable();
+}
+
+void timer_tick()
+{
+    --current->counter;
+    if (current->counter>0 || current->preempt_count >0) {
+        return;
+    }
+    current->counter=0;
+    enable_irq();
+    _schedule();
+    disable_irq();
+}
+
+static void _schedule(void)
 {
 	// debug("scheduler init\n", DEBUG_TRACE);
 
 	preempt_disable();
-	int next,c;
+	long next,c;
 	struct job_s * p;
 	while (1) {
 		c = -1;
@@ -49,13 +72,7 @@ void _schedule(void)
 	preempt_enable();
 }
 
-void schedule(void)
-{
-	current->counter = 0;
-	_schedule();
-}
-
-void switch_to(struct job_s * next, int pid) 
+static void switch_to(struct job_s * next, int pid)
 {
 	// debug("reached c level switch_to\n", DEBUG_TRACE);
 	if (current == next) 
@@ -67,20 +84,4 @@ void switch_to(struct job_s * next, int pid)
 	printf("switch_to: %d\n", pid);
 
 	cpu_switch_to(prev, next);
-}
-
-void schedule_tail(void) {
-	preempt_enable();
-}
-
-void timer_tick()
-{
-	--current->counter;
-	if (current->counter>0 || current->preempt_count >0) {
-		return;
-	}
-	current->counter=0;
-	enable_irq();
-	_schedule();
-	disable_irq();
 }

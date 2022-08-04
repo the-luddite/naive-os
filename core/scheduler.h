@@ -45,3 +45,12 @@ struct job_s {
 /*cpu_context*/	{ {0,0,0,0,0,0,0,0,0,0,0,0,0}, \
 /* state etc */	0,0,1, 0 \
 }
+
+void preempt_disable(void);
+void preempt_enable(void);
+void schedule(void);
+void cpu_switch_to(struct job_s *, struct job_s *);
+void timer_tick();
+void schedule_tail(void);
+static void switch_to(struct job_s *, int);
+static void _schedule(void);
