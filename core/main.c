@@ -23,8 +23,6 @@ void core_main()
 
     timer_init();
 
-	enable_irq();
-
 	int res = copy_process((unsigned long)&process, (unsigned long)"12345");
 	if (res) {
 		printf("error while starting process 1\n");
@@ -35,6 +33,8 @@ void core_main()
 		printf("error while starting process 2\n");
 		return;
 	}
+
+	enable_irq();
 
 	while(1) {
 		// wfi();	/* Wait for Interrupt */

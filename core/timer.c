@@ -8,7 +8,7 @@ static uint64_t interval;
 
 void timer_init(void) 
 {
-	interval = get_cntfrq() >> 2;
+	interval = get_cntfrq() / 2;
 
     disable_cntv();
 
@@ -20,9 +20,9 @@ void timer_init(void)
 
 void timer_irq_handler()
 {
-	timer_tick();
 	current_cnt = (get_cntvct() + interval) % UINT32_MAX;
 	put_cntv_cval(current_cnt);
+	timer_tick();
 }
 
 // void timer_test()

@@ -37,7 +37,7 @@ ret_from_fork:
 
 .globl cpu_switch_to
 cpu_switch_to:
-	mov	x10, 0
+	mov	x10, #0
 	add	x8, x0, x10
 	mov	x9, sp
 	stp	x19, x20, [x8], #16		// store callee-saved registers
@@ -65,10 +65,6 @@ delay:
 	ret
 
 cpu_0_code:
-    // bl init_stack_pointer_regs
-    adrp	x0, stack_top
-    mov	sp, x0
-
     adr	x0, vectors 
        
     switch_el x1, 3f, 2f, 1f
@@ -89,22 +85,6 @@ cpu_0_code:
 	mov	x0, #3 << 20
 	msr	cpacr_el1, x0			/* Enable FP/SIMD */
 0:
-    // debug message start
-    adrp x0, uart
-    add x0, x0, :lo12:uart
-    ldr x0, [x0]
-
-    mov w1, 104
-    strb w1, [x0]
-
-    mov w1, 101
-    strb w1, [x0]
-
-    mov w1, 108
-    strb w1, [x0]
-
-    mov w1, 108
-    strb w1, [x0]
-    // debug message end
-
+	adrp	x0, stack_top
+    mov	sp, x0
     bl core_main

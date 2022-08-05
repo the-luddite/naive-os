@@ -34,22 +34,21 @@ void __attribute__((interrupt)) do_error(void)
     print_uart("do_error interrupt happened!\n");
 }
 
-void __attribute__((interrupt)) do_irq(void) 
+void do_irq(void) 
 { 
     irq_no irq;
 
-    // print_uart("do_irq interrupt happened!\n");
+    disable_irq();
     
     if (pending_irq(&irq))
     {
-        // gicd_disable_int(irq);
-        disable_irq();
+        // this clear must be here, otherwise the function will be called many times in scheduler
+        gicd_clear_pending(irq);
         switch (irq)
         {
         case TIMER_IRQ:
             debug("timer irq just triggered (27)\n", DEBUG_ALL);
             timer_irq_handler();
-            goto clear;
             break;
         
         case UART_IRQ:
@@ -58,19 +57,15 @@ void __attribute__((interrupt)) do_irq(void)
             // print_uint(UART0->DR);
             uart_irq_handler();
             uart_enable_irq();
-            goto clear;
             break;
         default:
             debug("hm, there something else...   ", DEBUG_ALL);
             print_uint(irq);
-            goto clear;
             break;
         }
     } else {
         debug("ERROR: that's weird, we've received irq but pending_irq returned nothing\n", DEBUG_ALL);
     }
-clear:
-    gicd_clear_pending(irq);
-    // gicd_enable_int(irq);
+    
     enable_irq();
 }
