@@ -130,6 +130,9 @@ void do_irq_el0(void)
 
 void invalid_exception_context()
 {
+    register void * x24 asm("x24");
+    asm ("" : "=r"(x24));
+    printf("x24: %u\n", x24);
     printf("invalid_exception_context: looks like EL0 SYNC was called but no SVC was set, hang...");
     for(;;);
 }

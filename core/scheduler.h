@@ -39,11 +39,13 @@ struct job_s {
 	long counter;
 	long priority;
 	long preempt_count;
+	unsigned long stack;
+	unsigned long flags;
 };
 
 #define INIT_TASK \
 /*cpu_context*/	{ {0,0,0,0,0,0,0,0,0,0,0,0,0}, \
-/* state etc */	0,0,1, 0 \
+/* state etc */	0,0,1, 0, 0, PF_KTHREAD \
 }
 
 void preempt_disable(void);

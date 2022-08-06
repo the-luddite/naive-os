@@ -22,4 +22,11 @@ Src: https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson04/
 #define PAGING_PAGES    (PAGING_MEMORY/PAGE_SIZE)
 
 
+// #ifndef __ASSEMBLER__
+
+uint64_t get_free_page();
+void free_page(uint64_t p);
+void memzero(uint64_t src, uint64_t n);
 uintptr_t kmalloc(uint64_t size);
+
+// #endif

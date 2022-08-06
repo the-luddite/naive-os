@@ -111,7 +111,7 @@ vectors:
 	b	_do_error_el1	/* Current EL1 Error Handler */
 
 	.align	7
-	b	_do_bad_sync_el0	/* Current EL0 Synchronous Thread */
+	b	_do_sync_el0	/* Current EL0 Synchronous Thread */
 
 	.align	7
 	b	_do_bad_irq_el0	/* Current EL0 IRQ Thread */
@@ -123,7 +123,7 @@ vectors:
 	b	_do_bad_error_el0	/* Current EL0 Error Thread */
 
 	.align	7
-	b	_do_sync_el0	/* Current EL0 Synchronous Handler */
+	b	_do_bad_sync_el0	/* Current EL0 Synchronous Handler */
 
 	.align	7
 	b	_do_irq_el0		/* Current EL0 IRQ Handler */

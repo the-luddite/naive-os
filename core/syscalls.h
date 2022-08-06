@@ -4,8 +4,8 @@
 
 
 #ifndef __ASSEMBLER__
-void sys_write(char * buf);
-int sys_clone(unsigned long stack);
-unsigned long sys_malloc();
-void sys_exit();
+void call_sys_write(char * buf);
+int call_sys_clone(unsigned long fn, unsigned long arg, unsigned long stack);
+unsigned long call_sys_malloc();
+void call_sys_exit();
 #endif
