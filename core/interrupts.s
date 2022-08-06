@@ -16,8 +16,8 @@
 	b.eq	\el1_label
 .endm
 
-.macro	exception_entry
-	sub	sp, sp, #256
+.macro	exception_entry, el
+	sub	sp, sp, #272
 	stp	x0, x1, [sp, #16 * 0]
 	stp	x2, x3, [sp, #16 * 1]
 	stp	x4, x5, [sp, #16 * 2]
@@ -33,10 +33,32 @@
 	stp	x24, x25, [sp, #16 * 12]
 	stp	x26, x27, [sp, #16 * 13]
 	stp	x28, x29, [sp, #16 * 14]
-	str	x30, [sp, #16 * 15] 
+
+	.if	\el == 0
+	mrs	x21, sp_el0
+	.else
+	add	x21, sp, #272
+	.endif /* \el == 0 */
+
+	mrs	x22, elr_el1
+	mrs	x23, spsr_el1
+
+	stp	x30, x21, [sp, #16 * 15] 
+	stp	x22, x23, [sp, #16 * 16]
 .endm
 
-.macro	exception_exit
+.macro	exception_exit, el
+	ldp	x22, x23, [sp, #16 * 16]
+	ldp	x30, x21, [sp, #16 * 15] 
+
+	.if	\el == 0
+	msr	sp_el0, x21
+	.endif /* \el == 0 */
+
+	msr	elr_el1, x22			
+	msr	spsr_el1, x23
+
+
 	ldp	x0, x1, [sp, #16 * 0]
 	ldp	x2, x3, [sp, #16 * 1]
 	ldp	x4, x5, [sp, #16 * 2]
@@ -52,8 +74,7 @@
 	ldp	x24, x25, [sp, #16 * 12]
 	ldp	x26, x27, [sp, #16 * 13]
 	ldp	x28, x29, [sp, #16 * 14]
-	ldr	x30, [sp, #16 * 15] 
-	add	sp, sp, #256		
+	add	sp, sp, #272		
 	eret
 .endm
 
@@ -113,83 +134,83 @@ vectors:
 
 
 _do_bad_sync_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_bad_sync_el1
-	exception_exit
+	exception_exit 1
 
 _do_bad_irq_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_bad_irq_el1
-	exception_exit
+	exception_exit 1
 
 _do_bad_fiq_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_bad_fiq_el1
-	exception_exit
+	exception_exit 1
 
 _do_bad_error_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_bad_error_el1
-	exception_exit
+	exception_exit 1
 
 _do_sync_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_sync_el1
-	exception_exit
+	exception_exit 1
 
 _do_irq_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_irq_el1
-	exception_exit
+	exception_exit 1
 
 _do_fiq_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_fiq_el1
-	exception_exit
+	exception_exit 1
 
 _do_error_el1:
-	exception_entry
+	exception_entry 1
 	bl	do_error_el1
-	exception_exit
+	exception_exit 1
 
 /* 		EL0	 	*/
 
 _do_bad_sync_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_bad_sync_el0
-	exception_exit
+	exception_exit 0
 
 _do_bad_irq_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_bad_irq_el0
-	exception_exit
+	exception_exit 0
 
 _do_bad_fiq_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_bad_fiq_el0
-	exception_exit
+	exception_exit 0
 
 _do_bad_error_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_bad_error_el0
-	exception_exit
+	exception_exit 0
 
 _do_sync_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_sync_el0
-	exception_exit
+	exception_exit 0
 
 _do_irq_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_irq_el0
-	exception_exit
+	exception_exit 0
 
 _do_fiq_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_fiq_el0
-	exception_exit
+	exception_exit 0
 
 _do_error_el0:
-	exception_entry
+	exception_entry 0
 	bl	do_error_el0
-	exception_exit
+	exception_exit 0
