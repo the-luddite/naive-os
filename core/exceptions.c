@@ -22,6 +22,7 @@ void __attribute__((interrupt)) do_bad_error(void)
 void __attribute__((interrupt)) do_sync(void) 
 { 
     print_uart("do_sync interrupt happened!\n");
+    for(;;);
 }
 
 void __attribute__((interrupt)) do_fiq(void) 
