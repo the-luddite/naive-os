@@ -5,6 +5,7 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 #include "registers.h"
+#include "syscalls.h"
 
 
 .macro	switch_el, xreg, el3_label, el2_label, el1_label
@@ -201,7 +202,7 @@ _do_sync_el0:
 	mrs	x25, esr_el1				// read the syndrome register
 	lsr	x24, x25, #ESR_ELx_EC_SHIFT		// exception class
 	cmp	x24, #ESR_ELx_EC_SVC64			// SVC in 64-bit state
-	b.eq	do_sync_el0
+	b.eq	el0_svc
 	bl invalid_exception_context
 	exception_exit 0
 
@@ -219,3 +220,37 @@ _do_error_el0:
 	exception_entry 0
 	bl	do_error_el0
 	exception_exit 0
+
+/* End of exception handler difinition */
+
+sc_nr	.req	x25					// number of system calls
+scno	.req	x26					// syscall number
+stbl	.req	x27					// syscall table pointer
+
+el0_svc:
+	adr	stbl, sys_call_table			// load syscall table pointer
+	uxtw	scno, w8				// syscall number in w8
+	mov	sc_nr, #__NR_syscalls
+	bl	enable_irq
+	cmp     scno, sc_nr                     	// check upper syscall limit
+	b.hs	ni_sys
+
+	ldr	x16, [stbl, scno, lsl #3]		// address in the syscall table
+	blr	x16					// call sys_* routine
+	b	ret_from_syscall
+ni_sys:
+	bl invalid_syscall
+ret_from_syscall:
+	bl	disable_irq				
+	str	x0, [sp, #0]				// returned x0
+	exception_exit 0
+
+.globl ret_from_fork
+ret_from_fork:
+	bl	schedule_tail
+	cbz	x19, ret_to_user			// not a kernel thread
+	mov	x0, x20
+	blr	x19
+ret_to_user:
+	bl disable_irq				
+	exception_exit 0 

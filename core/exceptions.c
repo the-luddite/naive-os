@@ -133,3 +133,9 @@ void invalid_exception_context()
     printf("invalid_exception_context: looks like EL0 SYNC was called but no SVC was set, hang...");
     for(;;);
 }
+
+void invalid_syscall()
+{
+    printf("invalid syscall");
+    for(;;);
+}
