@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
+#include "registers.h"
 
 
 .macro	switch_el, xreg, el3_label, el2_label, el1_label
@@ -197,7 +198,11 @@ _do_bad_error_el0:
 
 _do_sync_el0:
 	exception_entry 0
-	bl	do_sync_el0
+	mrs	x25, esr_el1				// read the syndrome register
+	lsr	x24, x25, #ESR_ELx_EC_SHIFT		// exception class
+	cmp	x24, #ESR_ELx_EC_SVC64			// SVC in 64-bit state
+	b.eq	do_sync_el0
+	bl invalid_exception_context
 	exception_exit 0
 
 _do_irq_el0:

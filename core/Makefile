@@ -1,18 +1,18 @@
 CROSS = aarch64-suse-linux
 
 SRC_C = $(wildcard *.c)
-SRC_S = $(wildcard *.s)
-OBJS = $(SRC_C:.c=.o) $(SRC_S:.s=.o) 
+SRC_S = $(wildcard *.S)
+OBJS = $(SRC_C:.c=.o) $(SRC_S:.S=.o) 
 
-__CFLAGS = -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS)
+__CFLAGS = -Iinclude -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS)
 
 all: core.bin
 
 %.o: %.c
 	$(CROSS)-gcc $(__CFLAGS) -c $< -o $@ 
 
-%.o: %.s
-	$(CROSS)-gcc $(__CFLAGS) -c $< -o $@
+%.o: %.S
+	$(CROSS)-gcc -Iinclude -c $< -o $@
 
 
 core.bin: $(OBJS)
