@@ -64,66 +64,132 @@
 	.globl	vectors
 vectors:
 	.align	7
-	b	_do_bad_sync	/* Current EL Synchronous Thread */
+	b	_do_bad_sync_el1	/* Current EL1 Synchronous Thread */
 
 	.align	7
-	b	_do_bad_irq	/* Current EL IRQ Thread */
+	b	_do_bad_irq_el1	/* Current EL1 IRQ Thread */
 
 	.align	7
-	b	_do_bad_fiq	/* Current EL FIQ Thread */
+	b	_do_bad_fiq_el1	/* Current EL1 FIQ Thread */
 
 	.align	7
-	b	_do_bad_error	/* Current EL Error Thread */
+	b	_do_bad_error_el1	/* Current EL1 Error Thread */
 
 	.align	7
-	b	_do_sync	/* Current EL Synchronous Handler */
+	b	_do_sync_el1	/* Current EL1 Synchronous Handler */
 
 	.align	7
-	b	_do_irq		/* Current EL IRQ Handler */
+	b	_do_irq_el1		/* Current EL1 IRQ Handler */
 
 	.align	7
-	b	_do_fiq		/* Current EL FIQ Handler */
+	b	_do_fiq_el1		/* Current EL1 FIQ Handler */
 
 	.align	7
-	b	_do_error	/* Current EL Error Handler */
+	b	_do_error_el1	/* Current EL1 Error Handler */
+
+	.align	7
+	b	_do_bad_sync_el0	/* Current EL0 Synchronous Thread */
+
+	.align	7
+	b	_do_bad_irq_el0	/* Current EL0 IRQ Thread */
+
+	.align	7
+	b	_do_bad_fiq_el0	/* Current EL0 FIQ Thread */
+
+	.align	7
+	b	_do_bad_error_el0	/* Current EL0 Error Thread */
+
+	.align	7
+	b	_do_sync_el0	/* Current EL0 Synchronous Handler */
+
+	.align	7
+	b	_do_irq_el0		/* Current EL0 IRQ Handler */
+
+	.align	7
+	b	_do_fiq_el0		/* Current EL0 FIQ Handler */
+
+	.align	7
+	b	_do_error_el0	/* Current EL0 Error Handler */
 
 
-_do_bad_sync:
+_do_bad_sync_el1:
 	exception_entry
-	bl	do_bad_sync
+	bl	do_bad_sync_el1
 	exception_exit
 
-_do_bad_irq:
+_do_bad_irq_el1:
 	exception_entry
-	bl	do_bad_irq
+	bl	do_bad_irq_el1
 	exception_exit
 
-_do_bad_fiq:
+_do_bad_fiq_el1:
 	exception_entry
-	bl	do_bad_fiq
+	bl	do_bad_fiq_el1
 	exception_exit
 
-_do_bad_error:
+_do_bad_error_el1:
 	exception_entry
-	bl	do_bad_error
+	bl	do_bad_error_el1
 	exception_exit
 
-_do_sync:
+_do_sync_el1:
 	exception_entry
-	bl	do_sync
+	bl	do_sync_el1
 	exception_exit
 
-_do_irq:
+_do_irq_el1:
 	exception_entry
-	bl	do_irq
+	bl	do_irq_el1
 	exception_exit
 
-_do_fiq:
+_do_fiq_el1:
 	exception_entry
-	bl	do_fiq
+	bl	do_fiq_el1
 	exception_exit
 
-_do_error:
+_do_error_el1:
 	exception_entry
-	bl	do_error
+	bl	do_error_el1
+	exception_exit
+
+/* 		EL0	 	*/
+
+_do_bad_sync_el0:
+	exception_entry
+	bl	do_bad_sync_el0
+	exception_exit
+
+_do_bad_irq_el0:
+	exception_entry
+	bl	do_bad_irq_el0
+	exception_exit
+
+_do_bad_fiq_el0:
+	exception_entry
+	bl	do_bad_fiq_el0
+	exception_exit
+
+_do_bad_error_el0:
+	exception_entry
+	bl	do_bad_error_el0
+	exception_exit
+
+_do_sync_el0:
+	exception_entry
+	bl	do_sync_el0
+	exception_exit
+
+_do_irq_el0:
+	exception_entry
+	bl	do_irq_el0
+	exception_exit
+
+_do_fiq_el0:
+	exception_entry
+	bl	do_fiq_el0
+	exception_exit
+
+_do_error_el0:
+	exception_entry
+	bl	do_error_el0
 	exception_exit

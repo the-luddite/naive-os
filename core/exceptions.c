@@ -1,41 +1,49 @@
 #include "system.h"
 
 
-void __attribute__((interrupt)) do_bad_sync(void) 
+void do_bad_sync_el1(void) 
 { 
     print_uart("do_bad_sync interrupt happened!\n");
+    for(;;);
  }
-void __attribute__((interrupt)) do_bad_irq(void) 
+
+void do_bad_irq_el1(void) 
 { 
     print_uart("do_bad_irq interrupt happened!\n");
+    for(;;);
 }
-void __attribute__((interrupt)) do_bad_fiq(void) 
+
+void do_bad_fiq_el1(void) 
 { 
     print_uart("do_bad_fiq interrupt happened!\n");
+    for(;;);
 }
 
-void __attribute__((interrupt)) do_bad_error(void) 
+void do_bad_error_el1(void) 
 { 
     print_uart("do_bad_error interrupt happened!\n");
+    for(;;);
 }
 
-void __attribute__((interrupt)) do_sync(void) 
+void do_sync_el1(void) 
 { 
     print_uart("do_sync interrupt happened!\n");
     for(;;);
 }
 
-void __attribute__((interrupt)) do_fiq(void) 
+void do_fiq_el1(void) 
 {  
     print_uart("do_fiq interrupt happened!\n");
+    for(;;);
 }
 
-void __attribute__((interrupt)) do_error(void) 
+void do_error_el1(void) 
 { 
     print_uart("do_error interrupt happened!\n");
+    for(;;);
 }
 
-void do_irq(void) 
+void do_irq_el1(void) 
 { 
     irq_no irq;
 
@@ -69,4 +77,53 @@ void do_irq(void)
     }
     
     enable_irq();
+}
+
+
+void do_bad_sync_el0(void) 
+{ 
+    print_uart("do_bad_sync interrupt happened!\n");
+    for(;;);
+ }
+
+void do_bad_irq_el0(void) 
+{ 
+    print_uart("do_bad_irq interrupt happened!\n");
+    for(;;);
+}
+
+void do_bad_fiq_el0(void) 
+{ 
+    print_uart("do_bad_fiq interrupt happened!\n");
+    for(;;);
+}
+
+void do_bad_error_el0(void) 
+{ 
+    print_uart("do_bad_error interrupt happened!\n");
+    for(;;);
+}
+
+void do_sync_el0(void) 
+{ 
+    print_uart("do_sync interrupt happened!\n");
+    for(;;);
+}
+
+void do_fiq_el0(void) 
+{  
+    print_uart("do_fiq interrupt happened!\n");
+    for(;;);
+}
+
+void do_error_el0(void) 
+{ 
+    print_uart("do_error interrupt happened!\n");
+    for(;;);
+}
+
+void do_irq_el0(void) 
+{ 
+    print_uart("do_irq_el0 interrupt happened!\n");
+    for(;;);
 }
