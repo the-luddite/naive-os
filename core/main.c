@@ -64,6 +64,8 @@ void core_main()
 
     timer_init();
 
+	enable_irq();
+
 // #ifdef TEST_SCHED
 // 	test_sched_core_thread();
 // #endif
@@ -73,7 +75,7 @@ void core_main()
 		return;
 	}
 
-	enable_irq();
+	
 
 	while(1) {
 		// wfi();	/* Wait for Interrupt */
