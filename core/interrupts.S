@@ -87,138 +87,138 @@
 	.globl	vectors
 vectors:
 	.align	7
-	b	_do_bad_sync_el1	/* Current EL1 Synchronous Thread */
+	b	_curr_el_sp0_sync	/* Current EL1 Synchronous Thread */
 
 	.align	7
-	b	_do_bad_irq_el1	/* Current EL1 IRQ Thread */
+	b	_curr_el_sp0_irq	/* Current EL1 IRQ Thread */
 
 	.align	7
-	b	_do_bad_fiq_el1	/* Current EL1 FIQ Thread */
+	b	_curr_el_sp0_fiq	/* Current EL1 FIQ Thread */
 
 	.align	7
-	b	_do_bad_error_el1	/* Current EL1 Error Thread */
+	b	_curr_el_sp0_serror	/* Current EL1 Error Thread */
 
 	.align	7
-	b	_do_sync_el1	/* Current EL1 Synchronous Handler */
+	b	_curr_el_spx_sync	/* Current EL1 Synchronous Handler */
 
 	.align	7
-	b	_do_irq_el1		/* Current EL1 IRQ Handler */
+	b	_curr_el_spx_irq		/* Current EL1 IRQ Handler */
 
 	.align	7
-	b	_do_fiq_el1		/* Current EL1 FIQ Handler */
+	b	_curr_el_spx_fiq		/* Current EL1 FIQ Handler */
 
 	.align	7
-	b	_do_error_el1	/* Current EL1 Error Handler */
+	b	_curr_el_spx_serror	/* Current EL1 Error Handler */
 
 	.align	7
-	b	_do_sync_el0	/* Current EL0 Synchronous Thread */
+	b	_lower_el_aarch64_sync	/* Current EL0 Synchronous Thread */
 
 	.align	7
-	b	_do_bad_irq_el0	/* Current EL0 IRQ Thread */
+	b	_lower_el_aarch64_irq	/* Current EL0 IRQ Thread */
 
 	.align	7
-	b	_do_bad_fiq_el0	/* Current EL0 FIQ Thread */
+	b	_lower_el_aarch64_fiq	/* Current EL0 FIQ Thread */
 
 	.align	7
-	b	_do_bad_error_el0	/* Current EL0 Error Thread */
+	b	_lower_el_aarch64_serror	/* Current EL0 Error Thread */
 
 	.align	7
-	b	_do_bad_sync_el0	/* Current EL0 Synchronous Handler */
+	b	_lower_el_aarch32_sync	/* Current EL0 Synchronous Handler */
 
 	.align	7
-	b	_do_irq_el0		/* Current EL0 IRQ Handler */
+	b	_lower_el_aarch32_irq		/* Current EL0 IRQ Handler */
 
 	.align	7
-	b	_do_fiq_el0		/* Current EL0 FIQ Handler */
+	b	_lower_el_aarch32_fiq		/* Current EL0 FIQ Handler */
 
 	.align	7
-	b	_do_error_el0	/* Current EL0 Error Handler */
+	b	_lower_el_aarch32_serror	/* Current EL0 Error Handler */
 
 
-_do_bad_sync_el1:
+_curr_el_sp0_sync:
 	exception_entry 1
-	bl	do_bad_sync_el1
+	bl	curr_el_sp0_sync
 	exception_exit 1
 
-_do_bad_irq_el1:
+_curr_el_sp0_irq:
 	exception_entry 1
-	bl	do_bad_irq_el1
+	bl	curr_el_sp0_irq
 	exception_exit 1
 
-_do_bad_fiq_el1:
+_curr_el_sp0_fiq:
 	exception_entry 1
-	bl	do_bad_fiq_el1
+	bl	curr_el_sp0_fiq
 	exception_exit 1
 
-_do_bad_error_el1:
+_curr_el_sp0_serror:
 	exception_entry 1
-	bl	do_bad_error_el1
+	bl	curr_el_sp0_serror
 	exception_exit 1
 
-_do_sync_el1:
+_curr_el_spx_sync:
 	exception_entry 1
-	bl	do_sync_el1
+	bl	curr_el_spx_sync
 	exception_exit 1
 
-_do_irq_el1:
+_curr_el_spx_irq:
 	exception_entry 1
-	bl	do_irq_el1
+	bl	curr_el_spx_irq
 	exception_exit 1
 
-_do_fiq_el1:
+_curr_el_spx_fiq:
 	exception_entry 1
-	bl	do_fiq_el1
+	bl	curr_el_spx_fiq
 	exception_exit 1
 
-_do_error_el1:
+_curr_el_spx_serror:
 	exception_entry 1
-	bl	do_error_el1
+	bl	curr_el_spx_serror
 	exception_exit 1
 
 /* 		EL0	 	*/
 
-_do_bad_sync_el0:
-	exception_entry 0
-	bl	do_bad_sync_el0
-	exception_exit 0
-
-_do_bad_irq_el0:
-	exception_entry 0
-	bl	do_bad_irq_el0
-	exception_exit 0
-
-_do_bad_fiq_el0:
-	exception_entry 0
-	bl	do_bad_fiq_el0
-	exception_exit 0
-
-_do_bad_error_el0:
-	exception_entry 0
-	bl	do_bad_error_el0
-	exception_exit 0
-
-_do_sync_el0:
+_lower_el_aarch64_sync:
 	exception_entry 0
 	mrs	x25, esr_el1				// read the syndrome register
 	lsr	x24, x25, #ESR_ELx_EC_SHIFT		// exception class
 	cmp	x24, #ESR_ELx_EC_SVC64			// SVC in 64-bit state
 	b.eq	el0_svc
-	bl do_sync_el0
+	bl lower_el_aarch64_sync
 	exception_exit 0
 
-_do_irq_el0:
+_lower_el_aarch64_irq:
 	exception_entry 0
-	bl	do_irq_el0
+	bl	lower_el_aarch64_irq
 	exception_exit 0
 
-_do_fiq_el0:
+_lower_el_aarch64_fiq:
 	exception_entry 0
-	bl	do_fiq_el0
+	bl	lower_el_aarch64_fiq
 	exception_exit 0
 
-_do_error_el0:
+_lower_el_aarch64_serror:
 	exception_entry 0
-	bl	do_error_el0
+	bl	lower_el_aarch64_serror
+	exception_exit 0
+
+_lower_el_aarch32_sync:
+	exception_entry 0
+	bl	lower_el_aarch32_sync
+	exception_exit 0
+
+_lower_el_aarch32_irq:
+	exception_entry 0
+	bl	lower_el_aarch32_irq
+	exception_exit 0
+
+_lower_el_aarch32_fiq:
+	exception_entry 0
+	bl	lower_el_aarch32_fiq
+	exception_exit 0
+
+_lower_el_aarch32_serror:
+	exception_entry 0
+	bl	lower_el_aarch32_serror
 	exception_exit 0
 
 /* End of exception handler difinition */
