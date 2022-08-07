@@ -203,7 +203,7 @@ _do_sync_el0:
 	lsr	x24, x25, #ESR_ELx_EC_SHIFT		// exception class
 	cmp	x24, #ESR_ELx_EC_SVC64			// SVC in 64-bit state
 	b.eq	el0_svc
-	bl invalid_exception_context
+	bl do_sync_el0
 	exception_exit 0
 
 _do_irq_el0:

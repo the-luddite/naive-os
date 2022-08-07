@@ -8,8 +8,10 @@
 #define PRIO_BGND           (15)
 #define PRIO_TOP            (0)
 #define NR_TASKS			(64)
-#define TASK_RUNNING		(0)
 #define THREAD_SIZE			(4096)
+
+#define TASK_RUNNING		(0)
+#define TASK_ZOMBIE			(1)
 
 
 extern struct job_s *current;

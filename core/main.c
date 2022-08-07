@@ -19,6 +19,7 @@ void user_process(){
 	char buf[30] = {0};
 	tfp_sprintf(buf, "User process started\n\r");
 	call_sys_write(buf);
+	// printf("User process EL %d\r\n", get_current_el());
 	unsigned long stack = call_sys_malloc();
 	if (stack < 0) {
 		printf("Error while allocating stack for process 1\n\r");
@@ -63,14 +64,14 @@ void core_main()
 
     timer_init();
 
-#ifdef TEST_SCHED
-	test_sched_core_thread();
-#endif
-	// int res = copy_process(PF_KTHREAD, (unsigned long)&kernel_process, 0, 0);
-	// if (res < 0) {
-	// 	printf("error while starting kernel process");
-	// 	return;
-	// }
+// #ifdef TEST_SCHED
+// 	test_sched_core_thread();
+// #endif
+	int res = copy_process(PF_KTHREAD, (unsigned long)&kernel_process, 0, 0);
+	if (res < 0) {
+		printf("error while starting kernel process");
+		return;
+	}
 
 	enable_irq();
 

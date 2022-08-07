@@ -1,4 +1,4 @@
-#include "system.h"
+#include "exception.h"
 
 
 void do_bad_sync_el1(void) 
@@ -104,10 +104,18 @@ void do_bad_error_el0(void)
     for(;;);
 }
 
-void do_sync_el0(void) 
-{ 
-    printf("do_sync interrupt happened!\n");
-    for(;;);
+void do_sync_el0()
+{
+    register void * syndrome asm("x25");
+    asm ("" : "=r"(syndrome));
+
+    if ((syndrome && INSTRUCTION_TRAPPED) == INSTRUCTION_TRAPPED)
+    {
+        printf("do_sync_el0: 32-bit instruction trapped\n");
+    } else {
+        printf("do_sync_el0: syndrome exception register isn't INSTRUCTION_TRAPPED: %u\n");
+        for(;;);
+    }   
 }
 
 void do_fiq_el0(void) 
@@ -125,15 +133,6 @@ void do_error_el0(void)
 void do_irq_el0(void) 
 { 
     printf("do_irq_el0 interrupt happened!\n");
-    for(;;);
-}
-
-void invalid_exception_context()
-{
-    register void * x24 asm("x24");
-    asm ("" : "=r"(x24));
-    printf("x24: %u\n", x24);
-    printf("invalid_exception_context: looks like EL0 SYNC was called but no SVC was set, hang...");
     for(;;);
 }
 
