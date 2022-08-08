@@ -16,8 +16,8 @@ all: core.bin
 
 
 core.bin: $(OBJS)
-	# $(CROSS)-ld -T linker.lt $(OBJS) -o core.bin
-	$(CROSS)-ld  -T linker.lt $(OBJS) -o core.bin
+	# $(CROSS)-ld -T linker.ld $(OBJS) -o core.bin
+	$(CROSS)-ld  -T linker.ld $(OBJS) -o core.bin
 
 
 clean:
