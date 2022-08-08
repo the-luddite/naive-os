@@ -5,7 +5,7 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 #include "registers.h"
-#include "syscalls.h"
+#include "interface/syscalls.h"
 
 
 .macro	switch_el, xreg, el3_label, el2_label, el1_label

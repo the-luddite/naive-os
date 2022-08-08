@@ -1,6 +1,4 @@
 #include "system.h"
-#include "syscalls.h"
-#include "process.h"
 
 
 void core_main() 
