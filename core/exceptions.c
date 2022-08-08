@@ -1,42 +1,117 @@
-#include "system.h"
+#include "exception.h"
 
 
-void __attribute__((interrupt)) do_bad_sync(void) 
+void curr_el_sp0_sync(void) 
 { 
-    print_uart("do_bad_sync interrupt happened!\n");
+    printf("curr_el_sp0_sync interrupt happened!\n");
+    for(;;);
  }
-void __attribute__((interrupt)) do_bad_irq(void) 
-{ 
-    print_uart("do_bad_irq interrupt happened!\n");
-}
-void __attribute__((interrupt)) do_bad_fiq(void) 
-{ 
-    print_uart("do_bad_fiq interrupt happened!\n");
-}
 
-void __attribute__((interrupt)) do_bad_error(void) 
+void curr_el_sp0_irq(void) 
 { 
-    print_uart("do_bad_error interrupt happened!\n");
-}
-
-void __attribute__((interrupt)) do_sync(void) 
-{ 
-    print_uart("do_sync interrupt happened!\n");
+    printf("curr_el_sp0_irq interrupt happened!\n");
     for(;;);
 }
 
-void __attribute__((interrupt)) do_fiq(void) 
+void curr_el_sp0_fiq(void) 
+{ 
+    printf("curr_el_sp0_fiq interrupt happened!\n");
+    for(;;);
+}
+
+void curr_el_sp0_serror(void) 
+{ 
+    printf("curr_el_sp0_serror interrupt happened!\n");
+    for(;;);
+}
+
+void curr_el_spx_sync(void) 
+{ 
+    printf("curr_el_spx_sync interrupt happened!\n");
+    for(;;);
+}
+
+void curr_el_spx_fiq(void) 
 {  
-    print_uart("do_fiq interrupt happened!\n");
+    printf("curr_el_spx_fiq interrupt happened!\n");
+    for(;;);
 }
 
-void __attribute__((interrupt)) do_error(void) 
+void curr_el_spx_serror(void) 
 { 
-    print_uart("do_error interrupt happened!\n");
+    printf("curr_el_spx_serror interrupt happened!\n");
+    for(;;);
 }
 
-void do_irq(void) 
+void curr_el_spx_irq(void) 
 { 
+    general_purpose_irq();
+}
+
+
+void lower_el_aarch32_sync(void) 
+{ 
+    printf("lower_el_aarch32_sync interrupt happened!\n");
+    for(;;);
+ }
+
+void lower_el_aarch64_irq(void) 
+{ 
+    general_purpose_irq();
+}
+
+void lower_el_aarch64_fiq(void) 
+{ 
+    printf("lower_el_aarch64_fiq interrupt happened!\n");
+    for(;;);
+}
+
+void lower_el_aarch64_serror(void) 
+{ 
+    printf("lower_el_aarch64_serror interrupt happened!\n");
+    for(;;);
+}
+
+void lower_el_aarch64_sync()
+{
+    register void * syndrome asm("x25");
+    asm ("" : "=r"(syndrome));
+
+    if ((syndrome && INSTRUCTION_TRAPPED) == INSTRUCTION_TRAPPED)
+    {
+        printf("lower_el_aarch64_sync: 32-bit instruction trapped\n");
+    } else {
+        printf("lower_el_aarch64_sync: syndrome exception register isn't INSTRUCTION_TRAPPED: %u\n");
+        for(;;);
+    }   
+}
+
+void lower_el_aarch32_fiq(void) 
+{  
+    printf("lower_el_aarch32_fiq interrupt happened!\n");
+    for(;;);
+}
+
+void lower_el_aarch32_serror(void) 
+{ 
+    printf("lower_el_aarch32_serror interrupt happened!\n");
+    for(;;);
+}
+
+void lower_el_aarch32_irq(void) 
+{ 
+    printf("lower_el_aarch32_irq interrupt happened!\n");
+    for(;;);
+}
+
+void invalid_syscall()
+{
+    printf("invalid syscall");
+    for(;;);
+}
+
+void general_purpose_irq()
+{
     irq_no irq;
 
     disable_irq();

@@ -29,12 +29,6 @@ infinite_loop:
     wfe                     // Puts the core to sleep (Wait for event)
     b       infinite_loop
 
-.globl ret_from_fork
-ret_from_fork:
-	bl	schedule_tail
-	mov	x0, x20
-	blr	x19 		//should never return
-
 .globl cpu_switch_to
 cpu_switch_to:
 	mov	x10, #0

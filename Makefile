@@ -8,7 +8,7 @@ subdirs: $(SUBDIRS)
 
 $(TOPTARGETS): $(SUBDIRS)
 $(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS) CFLAGS=$(CFLAGS)
+	$(MAKE) -C $@ $(MAKECMDGOALS) CFLAGS="$(CFLAGS)"
 
 qemu:
 	qemu-system-aarch64 $(QEMU_ARGS)

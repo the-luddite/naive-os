@@ -8,8 +8,10 @@
 #define PRIO_BGND           (15)
 #define PRIO_TOP            (0)
 #define NR_TASKS			(64)
-#define TASK_RUNNING		(0)
 #define THREAD_SIZE			(4096)
+
+#define TASK_RUNNING		(0)
+#define TASK_ZOMBIE			(1)
 
 
 extern struct job_s *current;
@@ -18,19 +20,19 @@ extern int nr_tasks;
 
 
 struct cpu_context {
-	uint64_t x19;
-	uint64_t x20;
-	uint64_t x21;
-	uint64_t x22;
-	uint64_t x23;
-	uint64_t x24;
-	uint64_t x25;
-	uint64_t x26;
-	uint64_t x27;
-	uint64_t x28;
-	uint64_t fp;
-	uint64_t sp;
-	uint64_t pc;
+	u64 x19;
+	u64 x20;
+	u64 x21;
+	u64 x22;
+	u64 x23;
+	u64 x24;
+	u64 x25;
+	u64 x26;
+	u64 x27;
+	u64 x28;
+	u64 fp;
+	u64 sp;
+	u64 pc;
 };
 
 struct job_s {
@@ -39,11 +41,13 @@ struct job_s {
 	long counter;
 	long priority;
 	long preempt_count;
+	unsigned long stack;
+	unsigned long flags;
 };
 
 #define INIT_TASK \
 /*cpu_context*/	{ {0,0,0,0,0,0,0,0,0,0,0,0,0}, \
-/* state etc */	0,0,1, 0 \
+/* state etc */	0,0,1, 0, 0, PF_KTHREAD \
 }
 
 void preempt_disable(void);

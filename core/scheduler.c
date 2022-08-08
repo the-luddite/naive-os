@@ -85,3 +85,18 @@ static void switch_to(struct job_s * next, int pid)
 
 	cpu_switch_to(prev, next);
 }
+
+void exit_process(){
+	preempt_disable();
+	for (int i = 0; i < NR_TASKS; i++){
+		if (task[i] == current) {
+			task[i]->state = TASK_ZOMBIE;
+			break;
+		}
+	}
+	if (current->stack) {
+		kfree(current->stack);
+	}
+	preempt_enable();
+	schedule();
+}
