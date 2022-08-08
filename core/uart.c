@@ -1,18 +1,19 @@
 #include "uart.h"
+#include "memory.h"
 
 
-#define UART_BUF_MAX 100
-
-static u32 uart_buffer[UART_BUF_MAX];
+static u8 *uart_buffer;
 static u32 buffer_p = 0;
 
-pl011_T * const UART0 = (pl011_T *)QEMU_VIRT_UART_BASE;
+static pl011_T * const UART0 = (pl011_T *)QEMU_VIRT_UART_BASE;
 
 
 void uart_init()
 {
     uart_disable_tx_rx();
     uart_disable_irq();
+
+    uart_buffer = (u8*)kmalloc(sizeof(u8) * UART_BUF_MAX);
 
     // set baudrate = 115200
     UART0->IBRD = 26;
@@ -116,18 +117,16 @@ void uart_irq_handler()
 
     if (buffer_p >= UART_BUF_MAX - 1
             || c == 13)
-    {
-        print_uart("debug\n");
-        print_uart(uart_buffer);
-        // for (u32 i = 0; i <= uart_buffer.p; i++)
-        //     put_uart(uart_buffer.buffer[i]);
-        put_uart('\n');
+    {   
+        printf("\necho: %s\n", uart_buffer);
         buffer_p = 0;
+        uart_buffer[0] = '\0';
     } else if (buffer_p < UART_BUF_MAX - 1)
     {
         uart_buffer[buffer_p] = c;
         uart_buffer[buffer_p + 1] = '\0';
         buffer_p++;
+        put_uart(c);
     }
     
 }

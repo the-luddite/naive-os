@@ -5,6 +5,7 @@
 
 #define UARTDR			(QEMU_VIRT_UART_BASE)
 #define UARTFR			(QEMU_VIRT_UART_BASE + 0x018)
+#define UART_BUF_MAX    (300)
 
 
 typedef volatile struct {
