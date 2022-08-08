@@ -2,8 +2,8 @@
 
 #define FREE (0)
 
-static uint64_t current_desc;
-static uint8_t mem_map [ PAGING_PAGES ] = {0,};
+static u64 current_desc;
+static u8 mem_map [ PAGING_PAGES ] = {0,};
 
 
 static uintptr_t __allocate_page()
@@ -13,7 +13,7 @@ static uintptr_t __allocate_page()
         if (mem_map[i] == FREE)
         {
             mem_map[i] = current_desc;
-            return 0x40000000 + (LOW_MEMORY + i * PAGE_SIZE);
+            return LOW_MEMORY + i * PAGE_SIZE;
         }
     }
     return 0;
@@ -26,8 +26,8 @@ static void __free_pages(uintptr_t p)
         BUG("__free_page: attempted to free \
         memory higher than HIGH_MEMORY\n");
         
-    int s = (p - LOW_MEMORY) / PAGE_SIZE;
-    uint64_t color = mem_map[s];
+    u64 s = (p - LOW_MEMORY) / PAGE_SIZE;
+    u8 color = mem_map[s];
 
     if (color == FREE)
         BUG("__free_page: attempted to free \
@@ -41,10 +41,10 @@ static void __free_pages(uintptr_t p)
         
 }
 
-uintptr_t kmalloc(uint64_t size)
+uintptr_t kmalloc(u64 size)
 {
     uintptr_t p;
-    uint64_t pages = (uint64_t)(size / PAGE_SIZE);
+    u64 pages = (u64)(size / PAGE_SIZE);
 
     current_desc++;
 
@@ -66,7 +66,7 @@ fail:
     return 0;
 }
 
-uint8_t kfree(uintptr_t p)
+u8 kfree(uintptr_t p)
 {
     __free_pages(p);
 }

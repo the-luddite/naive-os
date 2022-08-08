@@ -12,7 +12,7 @@ int do_sys_clone(unsigned long fn, unsigned long arg, unsigned long stack)
 	return copy_process(0, 0, 0, stack);
 }
 
-unsigned long do_sys_malloc(uint64_t size)
+unsigned long do_sys_malloc(u64 size)
 {
 	unsigned long addr = kmalloc(size);
 	if (!addr) {

@@ -24,6 +24,6 @@ struct pt_regs {
 };
 
 
-int copy_process(uint64_t clone_flags, uint64_t fn, uint64_t arg, uint64_t stack);
-uint8_t move_to_user_mode(uint64_t pc);
+int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 stack);
+u8 move_to_user_mode(u64 pc);
 static struct pt_regs * task_pt_regs(struct job_s *tsk);

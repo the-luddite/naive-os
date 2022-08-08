@@ -26,7 +26,7 @@
 /* Initialize GIC Controller */
 static void init_gicc(void)
 {
-	uint32_t pending_irq;
+	u32 pending_irq;
 
     print_uart("init_gicc()\n");
 	/* Disable CPU interface */
@@ -63,25 +63,25 @@ static void init_gicd(void)
 	/* Disable all IRQs */
 	regs_nr = (GIC_INT_MAX + GIC_GICD_INT_PER_REG - 1) / GIC_GICD_INT_PER_REG;
 	for (i = 0; regs_nr > i; ++i)
-		*REG_GIC_GICD_ICENABLER(i) = ~((uint32_t)(0)); 
+		*REG_GIC_GICD_ICENABLER(i) = ~((u32)(0)); 
 
 	/* Clear all pending IRQs */
 	regs_nr = (GIC_INT_MAX + GIC_GICD_INT_PER_REG - 1) / GIC_GICD_INT_PER_REG;
 	for (i = 0; regs_nr > i; ++i) 
-		*REG_GIC_GICD_ICPENDR(i) = ~((uint32_t)(0));
+		*REG_GIC_GICD_ICPENDR(i) = ~((u32)(0));
 
 	/* Set all of interrupt priorities as the lowest priority */
 	regs_nr = ( GIC_INT_MAX + GIC_GICD_IPRIORITY_PER_REG - 1) / 
 		GIC_GICD_IPRIORITY_PER_REG ;
 	for (i = 0; regs_nr > i; i++)
-		*REG_GIC_GICD_IPRIORITYR(i) = ~((uint32_t)(0));
+		*REG_GIC_GICD_IPRIORITYR(i) = ~((u32)(0));
 
 	/* Set target of all of shared peripherals to processor 0 */
 	for (i = GIC_INTNO_SPI0 / GIC_GICD_ITARGETSR_PER_REG;
 	     ( (GIC_INT_MAX + (GIC_GICD_ITARGETSR_PER_REG - 1) ) / 
 		 GIC_GICD_ITARGETSR_PER_REG ) > i; ++i) 
 		*REG_GIC_GICD_ITARGETSR(i) = 
-			(uint32_t)GIC_GICD_ITARGETSR_CORE0_TARGET_BMAP;
+			(u32)GIC_GICD_ITARGETSR_CORE0_TARGET_BMAP;
 
 	/* Set trigger type for all peripheral interrupts level triggered */
 	for (i = GIC_INTNO_PPI0 / GIC_GICD_ICFGR_PER_REG;
@@ -127,15 +127,15 @@ void gicd_clear_pending(irq_no irq) {
     0x4 processor 2
     0x8 processor 3
  */
-static void gicd_set_target(irq_no irq, uint32_t p)
+static void gicd_set_target(irq_no irq, u32 p)
 {
-	uint32_t  shift;
-	uint32_t    reg;
+	u32  shift;
+	u32    reg;
 
 	shift = (irq % GIC_GICD_ITARGETSR_PER_REG) * GIC_GICD_ITARGETSR_SIZE_PER_REG;
 
 	reg = *REG_GIC_GICD_ITARGETSR(irq / GIC_GICD_ITARGETSR_PER_REG);
-	reg &= ~( ((uint32_t)(0xff)) << shift);
+	reg &= ~( ((u32)(0xff)) << shift);
 	reg |= (p << shift);
 	*REG_GIC_GICD_ITARGETSR(irq / GIC_GICD_ITARGETSR_PER_REG) = reg;
 }
@@ -144,14 +144,14 @@ static void gicd_set_target(irq_no irq, uint32_t p)
     @param[in] irq  IRQ number
     @param[in] prio Interrupt priority in Arm specific expression
  */
-static void gicd_set_priority(irq_no irq, uint32_t prio)
+static void gicd_set_priority(irq_no irq, u32 prio)
 {
-	uint32_t  shift;
-	uint32_t    reg;
+	u32  shift;
+	u32    reg;
 
 	shift = (irq % GIC_GICD_IPRIORITY_PER_REG) * GIC_GICD_IPRIORITY_SIZE_PER_REG;
 	reg = *REG_GIC_GICD_IPRIORITYR(irq / GIC_GICD_IPRIORITY_PER_REG);
-	reg &= ~(((uint32_t)(0xff)) << shift);
+	reg &= ~(((u32)(0xff)) << shift);
 	reg |= (prio << shift);
 	*REG_GIC_GICD_IPRIORITYR(irq / GIC_GICD_IPRIORITY_PER_REG) = reg;
 }
@@ -162,15 +162,15 @@ static void gicd_set_priority(irq_no irq, uint32_t prio)
  */
 static void gicd_config(irq_no irq, unsigned int config)
 {
-	uint32_t	shift; 
-	uint32_t	  reg;
+	u32	shift; 
+	u32	  reg;
 
 	shift = (irq % GIC_GICD_ICFGR_PER_REG) * GIC_GICD_ICFGR_SIZE_PER_REG; /* GICD_ICFGR has 16 fields, each field has 2bits. */
 
 	reg = *REG_GIC_GICD_ICFGR( irq / GIC_GICD_ICFGR_PER_REG);
 
-	reg &= ~( ( (uint32_t)(0x03) ) << shift );  /* Clear the field */
-	reg |= ( ( (uint32_t)config ) << shift );  /* Set the value to the field correponding to irq */
+	reg &= ~( ( (u32)(0x03) ) << shift );  /* Clear the field */
+	reg |= ( ( (u32)config ) << shift );  /* Set the value to the field correponding to irq */
 	*REG_GIC_GICD_ICFGR( irq / GIC_GICD_ICFGR_PER_REG) = reg;
 }
 
@@ -205,7 +205,7 @@ void gic_v3_initialize(void)
 	gicd_clear_pending(UART_IRQ);
 	gicd_enable_int(UART_IRQ);
 
-	// for (uint32_t i = 0; i < 64; i++)
+	// for (u32 i = 0; i < 64; i++)
 	// {
 	// 	gicd_config(i, GIC_GICD_ICFGR_EDGE);
 	// 	gicd_set_priority(i, 0 << GIC_PRI_SHIFT );  /* Set priority */

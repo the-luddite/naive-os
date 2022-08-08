@@ -8,22 +8,22 @@
 
 
 typedef volatile struct {
- uint32_t DR;
- uint32_t RSR_ECR;
- uint8_t reserved1[0x10];
- const uint32_t FR;
- uint8_t reserved2[0x4];
- uint32_t LPR;
- uint32_t IBRD;
- uint32_t FBRD;
- uint32_t LCR_H;
- uint32_t CR;
- uint32_t IFLS;
- uint32_t IMSC;
- const uint32_t RIS;
- const uint32_t MIS;
- uint32_t ICR;
- uint32_t DMACR;
+ u32 DR;
+ u32 RSR_ECR;
+ u8 reserved1[0x10];
+ const u32 FR;
+ u8 reserved2[0x4];
+ u32 LPR;
+ u32 IBRD;
+ u32 FBRD;
+ u32 LCR_H;
+ u32 CR;
+ u32 IFLS;
+ u32 IMSC;
+ const u32 RIS;
+ const u32 MIS;
+ u32 ICR;
+ u32 DMACR;
 } pl011_T;
 
 enum {
@@ -33,6 +33,6 @@ enum {
 
 
 void print_uart(const char *s);
-uint32_t read_uart();
+u32 read_uart();
 void put_uart(char c);
 void putc_uart( void* p, char c);

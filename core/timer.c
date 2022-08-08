@@ -1,13 +1,13 @@
 #include "timer.h"
 
 
-// static uint32_t current_cnt;
-static uint64_t interval;
+// static u32 current_cnt;
+static u64 interval;
 
 
 void timer_init(void) 
 {
-	static uint64_t current_cnt;
+	static u64 current_cnt;
 	interval = raw_read_cntfrq_el0() / 2;
 
     disable_cntv();
@@ -20,7 +20,7 @@ void timer_init(void)
 
 void timer_irq_handler()
 {
-	static uint64_t current_cnt;
+	static u64 current_cnt;
 	disable_cntv();
 	// current_cnt = (get_cntvct() + interval);
 	// printf("current: %u, next: %u\n", get_cntvct(), current_cnt);
@@ -33,8 +33,8 @@ void timer_irq_handler()
 
 // void timer_test()
 // {
-//     uint32_t val;
-// 	uint64_t ticks, current_cnt;
+//     u32 val;
+// 	u64 ticks, current_cnt;
 
 //     print_uart("CurrentEL = ");
 // 	get_current_el(&val);

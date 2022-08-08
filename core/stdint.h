@@ -24,6 +24,10 @@
 
 #define __WORDSIZE	64
 
+#define u64 uint64_t
+#define u32 uint32_t
+#define u8  uint8_t
+
 /* Convenience types.  */
 typedef unsigned char __u_char;
 typedef unsigned short int __u_short;

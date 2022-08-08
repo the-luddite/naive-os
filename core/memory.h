@@ -15,8 +15,9 @@ Src: https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson04/
 #define PAGE_SIZE       (1 << PAGE_SHIFT)	// 4096
 #define SECTION_SIZE    (1 << SECTION_SHIFT)	
 
-#define LOW_MEMORY      (2 * SECTION_SIZE)
-#define HIGH_MEMORY     QEMU_VIRT_PCIE_ECAM
+#define RAM_SHIFT       (0x40000000)
+#define LOW_MEMORY      (2 * SECTION_SIZE + RAM_SHIFT)
+#define HIGH_MEMORY     (QEMU_VIRT_PCIE_ECAM + RAM_SHIFT)
 
 #define PAGING_MEMORY   (HIGH_MEMORY - LOW_MEMORY)
 #define PAGING_PAGES    (PAGING_MEMORY/PAGE_SIZE)
@@ -24,9 +25,9 @@ Src: https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson04/
 
 // #ifndef __ASSEMBLER__
 
-uint64_t get_free_page();
-void free_page(uint64_t p);
-void memzero(uint64_t src, uint64_t n);
-uintptr_t kmalloc(uint64_t size);
+u64 get_free_page();
+void free_page(u64 p);
+void memzero(u64 src, u64 n);
+uintptr_t kmalloc(u64 size);
 
 // #endif

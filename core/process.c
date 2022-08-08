@@ -4,7 +4,7 @@
 void ret_from_fork(void);
 
 
-int copy_process(uint64_t clone_flags, uint64_t fn, uint64_t arg, uint64_t stack)
+int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 stack)
 {
 	preempt_disable();
 	struct job_s *p;
@@ -15,8 +15,8 @@ int copy_process(uint64_t clone_flags, uint64_t fn, uint64_t arg, uint64_t stack
 	}
 
 	struct pt_regs *childregs = task_pt_regs(p);
-	memzero((uint64_t)childregs, sizeof(struct pt_regs));
-	memzero((uint64_t)&p->cpu_context, sizeof(struct cpu_context));
+	memzero((u64)childregs, sizeof(struct pt_regs));
+	memzero((u64)&p->cpu_context, sizeof(struct cpu_context));
 
 	if (clone_flags & PF_KTHREAD) {
 		p->cpu_context.x19 = fn;
@@ -34,21 +34,21 @@ int copy_process(uint64_t clone_flags, uint64_t fn, uint64_t arg, uint64_t stack
 	p->counter = p->priority;
 	p->preempt_count = 1; //disable preemtion until schedule_tail
 
-	p->cpu_context.pc = (uint64_t)ret_from_fork;
-	p->cpu_context.sp = (uint64_t)childregs;
+	p->cpu_context.pc = (u64)ret_from_fork;
+	p->cpu_context.sp = (u64)childregs;
 	int pid = nr_tasks++;
 	task[pid] = p;
 	preempt_enable();
 	return pid;
 }
 
-uint8_t move_to_user_mode(uint64_t pc)
+u8 move_to_user_mode(u64 pc)
 {
 	struct pt_regs *regs = task_pt_regs(current);
-	memzero((uint64_t)regs, sizeof(*regs));
+	memzero((u64)regs, sizeof(*regs));
 	regs->pc = pc;
 	regs->pstate = PSR_MODE_EL0t;
-	uint64_t stack = kmalloc(sizeof(uint64_t)); //allocate new user stack
+	u64 stack = kmalloc(sizeof(u64)); //allocate new user stack
 	if (!stack) {
 		return -1;
 	}
@@ -59,6 +59,6 @@ uint8_t move_to_user_mode(uint64_t pc)
 
 static struct pt_regs * task_pt_regs(struct job_s *tsk)
 {
-	uint64_t p = (uint64_t)tsk + THREAD_SIZE - sizeof(struct pt_regs);
+	u64 p = (u64)tsk + THREAD_SIZE - sizeof(struct pt_regs);
 	return (struct pt_regs *)p;
 }
