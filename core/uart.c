@@ -124,8 +124,7 @@ void uart_irq_handler()
     } else if (buffer_p < UART_BUF_MAX - 1)
     {
         uart_buffer[buffer_p] = c;
-        uart_buffer[buffer_p + 1] = '\0';
-        buffer_p++;
+        uart_buffer[buffer_p++] = '\0';
         put_uart(c);
     }
     
