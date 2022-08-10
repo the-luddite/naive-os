@@ -1,6 +1,7 @@
 #pragma once
 
-#include "qemu.h"
+#include "aarch64/qemu.h"
+#include "memory.h"
 #include "stdint.h"
 
 #define UARTDR			(QEMU_VIRT_UART_BASE)

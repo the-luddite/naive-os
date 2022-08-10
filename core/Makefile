@@ -1,24 +1,42 @@
 CROSS = aarch64-suse-linux
+CC = $(CROSS)-gcc
 
-SRC_C = $(wildcard *.c)
-SRC_S = $(wildcard *.S)
-OBJS = $(SRC_C:.c=.o) $(SRC_S:.S=.o) 
+SUBDIRS = syscalls 
+TOPTARGETS := all clean
 
-__CFLAGS = -Iinclude -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS)
+__C := $(wildcard *.c)
+__S := $(wildcard *.S)
+
+__C += $(wildcard syscalls/*.c)
+__S += $(wildcard syscalls/*.S)
+
+__C += $(wildcard aarch64/*.c)
+__S += $(wildcard aarch64/*.S)
+
+OBJECTS = $(__C:.c=.o) $(__S:.S=.o)
+
+__CFLAGS = -Iinclude -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS) -I$(ROOT)
+
 
 all: core.bin
 
+.PHONY: subdirs $(SUBDIRS)
+subdirs: $(SUBDIRS)
+
+
+$(TOPTARGETS): $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@ $(MAKECMDGOALS) CFLAGS="$(__CFLAGS)" ROOT=$(ROOT) CC=$(CC)
+
 %.o: %.c
-	$(CROSS)-gcc $(__CFLAGS) -c $< -o $@ 
+	$(CC) $(__CFLAGS) -c $< -o $@ 
 
 %.o: %.S
-	$(CROSS)-gcc -Iinclude -c $< -o $@
+	$(CC) $(__CFLAGS) -c $< -o $@
 
-
-core.bin: $(OBJS)
-	# $(CROSS)-ld -T linker.ld $(OBJS) -o core.bin
-	$(CROSS)-ld  -T linker.ld $(OBJS) -o core.bin
-
+core.bin: $(OBJECTS)
+	@echo $(OBJECTS)
+	$(CROSS)-ld  -T linker.ld $(OBJECTS) -o core.bin
 
 clean:
 	rm -r *.o *.bin

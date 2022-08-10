@@ -1,4 +1,6 @@
-#include "system.h"
+#include "aarch64/system.h"
+#include "printf.h"
+#include "debug.h"
 
 
 void core_main() 

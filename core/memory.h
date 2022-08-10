@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qemu.h"
+#include "aarch64/qemu.h"
 #include "stdint.h"
 #include "debug.h"
 

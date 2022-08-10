@@ -19,7 +19,7 @@
 #define _GIC_V3_H
 
 #include "stdint.h"
-#include "qemu.h"
+#include "aarch64/qemu.h"
 
 typedef int32_t irq_no;			/* IRQ no */
 
