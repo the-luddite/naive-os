@@ -1,5 +1,4 @@
 #include "uart.h"
-#include "memory.h"
 
 
 static u8 *uart_buffer;

@@ -1,5 +1,5 @@
-#include "interface/syscalls.h"
-#include "system.h"
+#include "syscalls.h"
+#include "aarch64/system.h"
 
 
 void do_sys_write(char * buf)
@@ -24,7 +24,16 @@ unsigned long do_sys_malloc(u64 size)
 void do_sys_exit()
 {
 	exit_process();
-    printf("exit process called\n");
 }
 
-void * const sys_call_table[] = {do_sys_write, do_sys_malloc, do_sys_clone, do_sys_exit};
+void do_sys_open(u8 *path)
+{
+	exit_process();
+}
+
+void do_sys_read()
+{
+	exit_process();
+}
+
+void * const sys_call_table[] = {do_sys_write, do_sys_malloc, do_sys_clone, do_sys_exit, do_sys_open, do_sys_read};
