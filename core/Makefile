@@ -15,7 +15,7 @@ __S += $(wildcard aarch64/*.S)
 
 OBJECTS = $(__C:.c=.o) $(__S:.S=.o)
 
-__CFLAGS = -Iinclude -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS) -I$(ROOT)
+__CFLAGS = -Iinclude -g -mcpu=cortex-a57 -nostdlib -nostartfiles -ffreestanding -Iinclude -mgeneral-regs-only $(CFLAGS) $(INCLUDE)
 
 
 all: core.bin
@@ -26,7 +26,7 @@ subdirs: $(SUBDIRS)
 
 $(TOPTARGETS): $(SUBDIRS)
 $(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS) CFLAGS="$(__CFLAGS)" ROOT=$(ROOT) CC=$(CC)
+	$(MAKE) -C $@ $(MAKECMDGOALS) CFLAGS="$(__CFLAGS)" CC=$(CC)
 
 %.o: %.c
 	$(CC) $(__CFLAGS) -c $< -o $@ 
