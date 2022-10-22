@@ -1,7 +1,7 @@
 CROSS = aarch64-suse-linux
 CC = $(CROSS)-gcc
 
-SUBDIRS = syscalls 
+SUBDIRS = syscalls userspace
 TOPTARGETS := all clean
 
 __C := $(wildcard *.c)
@@ -12,6 +12,9 @@ __S += $(wildcard syscalls/*.S)
 
 __C += $(wildcard aarch64/*.c)
 __S += $(wildcard aarch64/*.S)
+
+__C += $(wildcard userspace/*.c)
+__S += $(wildcard userspace/*.S)
 
 OBJECTS = $(__C:.c=.o) $(__S:.S=.o)
 

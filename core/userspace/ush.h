@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../interface/syscalls.h"
-#include "../printf.h"
+#include "../include/syscalls.h"
 
 
 void ush_start();

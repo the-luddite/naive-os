@@ -17,6 +17,7 @@ int copy_process(u64 clone_flags, u64 fn, u64 arg, u64 stack)
 	struct pt_regs *childregs = task_pt_regs(p);
 	memzero((u64)childregs, sizeof(struct pt_regs));
 	memzero((u64)&p->cpu_context, sizeof(struct cpu_context));
+	memzero((u64)&p->filp, sizeof(struct file) * NR_OPEN);
 
 	if (clone_flags & PF_KTHREAD) {
 		p->cpu_context.x19 = fn;

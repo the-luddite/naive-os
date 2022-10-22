@@ -8,7 +8,7 @@ void user_process1(char *array)
 	while (1){
 		for (int i = 0; i < 5; i++){
 			buf[0] = array[i];
-			call_sys_write(buf);
+			asm_sys_write(buf);
 			delay(100000);
 		}
 	}
@@ -17,29 +17,29 @@ void user_process1(char *array)
 void user_process(){
 	char buf[30] = {0};
 	tfp_sprintf(buf, "User process started\n\r");
-	call_sys_write(buf);
+	asm_sys_write(buf);
 	// printf("User process EL %d\r\n", get_current_el());
-	unsigned long stack = call_sys_malloc();
+	unsigned long stack = asm_sys_malloc();
 	if (stack < 0) {
 		printf("Error while allocating stack for process 1\n\r");
 		return;
 	}
-	int err = call_sys_clone((unsigned long)&user_process1, (unsigned long)"12345", stack);
+	int err = asm_sys_clone((unsigned long)&user_process1, (unsigned long)"12345", stack);
 	if (err < 0){
 		printf("Error while clonning process 1\n\r");
 		return;
 	} 
-	stack = call_sys_malloc();
+	stack = asm_sys_malloc();
 	if (stack < 0) {
 		printf("Error while allocating stack for process 1\n\r");
 		return;
 	}
-	err = call_sys_clone((unsigned long)&user_process1, (unsigned long)"abcd", stack);
+	err = asm_sys_clone((unsigned long)&user_process1, (unsigned long)"abcd", stack);
 	if (err < 0){
 		printf("Error while clonning process 2\n\r");
 		return;
 	} 
-	call_sys_exit();
+	asm_sys_exit();
 }
 
 

@@ -1,26 +1,44 @@
 #include "syscalls/syscalls.h"
 
 
-.globl call_sys_write
-call_sys_write:
+.globl asm_sys_write
+asm_sys_write:
 	mov w8, #SYS_WRITE_NUMBER	
 	svc #0
 	ret
 
-.globl call_sys_malloc
-call_sys_malloc:
+.globl asm_sys_malloc
+asm_sys_malloc:
 	mov w8, #SYS_MALLOC_NUMBER	
 	svc #0
 	ret
 
-.globl call_sys_exit
-call_sys_exit:
+.globl asm_sys_exit
+asm_sys_exit:
 	mov w8, #SYS_EXIT_NUMBER	
 	svc #0
 	ret
 
-.globl call_sys_clone
-call_sys_clone:
+.globl asm_sys_open
+asm_sys_open:
+	mov w8, #SYS_OPEN_NUMBER	
+	svc #0
+	ret
+
+.globl asm_sys_read
+asm_sys_read:
+	mov w8, #SYS_READ_NUMBER	
+	svc #0
+	ret
+
+.globl asm_sys_print
+asm_sys_print:
+	mov w8, #SYS_PRINT_NUMBER	
+	svc #0
+	ret
+
+.globl asm_sys_clone
+asm_sys_clone:
 	/* Save args for the child.  */
 	mov	x10, x0					/*fn*/
 	mov	x11, x1					/*arg*/

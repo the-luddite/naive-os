@@ -31,9 +31,9 @@ void do_sys_open(char *path)
 	exit_process();
 }
 
-void do_sys_read(unsigned *buf)
+int32_t do_sys_read(unsigned *buf)
 {
-	uard_read_buffer(buf);
+	return uart_read_buffer(buf);
 }
 
 void do_sys_print(unsigned *buf)

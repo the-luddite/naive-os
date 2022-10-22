@@ -1,7 +1,7 @@
 #include "uart.h"
 
 
-static u8 *uart_buffer;
+static char *uart_buffer;
 static u32 buffer_p = 0;
 
 static pl011_T * const UART0 = (pl011_T *)QEMU_VIRT_UART_BASE;
@@ -12,7 +12,7 @@ void uart_init()
     uart_disable_tx_rx();
     uart_disable_irq();
 
-    uart_buffer = (u8*)kmalloc(sizeof(u8) * UART_BUF_MAX);
+    uart_buffer = (char*)kmalloc(sizeof(char) * UART_BUF_MAX);
 
     // set baudrate = 115200
     UART0->IBRD = 26;
@@ -114,17 +114,31 @@ void uart_irq_handler()
 {
     u32 c = read_uart();
 
-    if (buffer_p >= UART_BUF_MAX - 1
-            || c == 13)
-    {   
-        printf("\necho: %s\n", uart_buffer);
-        buffer_p = 0;
-        uart_buffer[0] = '\0';
-    } else if (buffer_p < UART_BUF_MAX - 1)
-    {
+    if (buffer_p >= UART_BUF_MAX - 1) {
+        uart_reset_buffer();
+    } else {
         uart_buffer[buffer_p] = c;
-        uart_buffer[buffer_p++] = '\0';
-        put_uart(c);
+        buffer_p++;
+        uart_buffer[buffer_p] = '\0';
     }
-    
+}
+
+void uart_reset_buffer()
+{
+    buffer_p = 0;
+    uart_buffer[0] = '\0';
+}
+
+int32_t uart_read_buffer(char *buf)
+{
+    int c = 0;
+    if (buffer_p == 0)
+        return 0;
+    while (c < buffer_p)
+    {
+        buf[c] = uart_buffer[c];
+        c++;
+    }
+    uart_reset_buffer();
+    return c;
 }

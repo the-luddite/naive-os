@@ -80,9 +80,7 @@ static void switch_to(struct job_s * next, int pid)
 	struct job_s * prev = current;
 	current = next;
 
-	// debug("body of c level switch_to\n", DEBUG_TRACE);
-	printf("switch_to: %d\n", pid);
-
+	debug("body of c level switch_to\n", DEBUG_TRACE);
 	cpu_switch_to(prev, next);
 }
 

@@ -1,4 +1,4 @@
 #pragma once
 
 
-void userspace_init();
+void call_init();
